@@ -2,11 +2,13 @@ package com.atomscat.config.ratpack;
 
 import com.google.inject.Module;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import ratpack.func.Function;
 import ratpack.guice.Guice;
 import ratpack.registry.Registry;
@@ -84,13 +86,18 @@ public class StartRatpackConfiguration  implements CommandLineRunner {
         @Autowired(required = false)
         private List<RatpackServerCustomizer> customizers = Collections.emptyList();
 
+
+        @Value("${server.port}")
+        private Integer port;
+
         protected ServerConfigConfiguration() {}
 
         @Bean
         @ConditionalOnMissingBean
         public ServerConfig ratpackServerConfig() throws Exception {
 
-            this.ratpack.setPort(8080);
+
+            this.ratpack.setPort(port);
 
             ServerConfigBuilder serverConfigBuilder = ServerConfig.builder().baseDir(this.ratpack.getBasepath()).address(this.ratpack.getAddress()).threads(this.ratpack.getMaxThreads());
             if(this.ratpack.getPort() != null) {

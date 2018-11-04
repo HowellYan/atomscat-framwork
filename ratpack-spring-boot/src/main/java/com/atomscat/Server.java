@@ -3,6 +3,7 @@ package com.atomscat;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import ratpack.func.Action;
 import ratpack.handling.Chain;
 import ratpack.service.Service;
@@ -15,6 +16,7 @@ import ratpack.spring.config.EnableRatpack;
 @SpringBootApplication
 @EnableRatpack
 public class Server {
+
     @Bean
     public Action<Chain> home() {
         return chain -> chain
