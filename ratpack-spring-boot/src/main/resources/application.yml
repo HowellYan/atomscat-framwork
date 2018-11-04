@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: ratpack-spring-boot
+server:
+  port: 8081

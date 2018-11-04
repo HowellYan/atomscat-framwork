@@ -31,11 +31,6 @@
             <!-- ratpack start -->
             <dependency>
                 <groupId>io.ratpack</groupId>
-                <artifactId>ratpack-core</artifactId>
-                <version>${ratpack.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ratpack</groupId>
                 <artifactId>ratpack-spring-boot</artifactId>
                 <version>${ratpack.version}</version>
                 <exclusions>
