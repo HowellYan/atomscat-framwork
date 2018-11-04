@@ -95,8 +95,6 @@ public class StartRatpackConfiguration  implements CommandLineRunner {
         @Bean
         @ConditionalOnMissingBean
         public ServerConfig ratpackServerConfig() throws Exception {
-
-
             this.ratpack.setPort(port);
 
             ServerConfigBuilder serverConfigBuilder = ServerConfig.builder().baseDir(this.ratpack.getBasepath()).address(this.ratpack.getAddress()).threads(this.ratpack.getMaxThreads());
