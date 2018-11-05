@@ -2,4 +2,4 @@ spring:
   application:
     name: ratpack-spring-boot
 server:
-  port: 9090
+  port: 9898
