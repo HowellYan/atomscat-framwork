@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: ratpack-spring-boot
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/business_core?characterEncoding=utf-8&useSSL=false
+    username: root
+    password: Aa123456
+server:
+  port: 9898
+
+

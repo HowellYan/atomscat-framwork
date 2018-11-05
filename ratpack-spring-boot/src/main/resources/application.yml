@@ -1,5 +1,16 @@
 spring:
+  profiles:
+    active: dev
   application:
     name: ratpack-spring-boot
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    database: 0
 server:
-  port: 9898
+  port: 8080
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  type-aliases-package: com.atomscat.entity
+  type-enums-package: com.atomscat.entity

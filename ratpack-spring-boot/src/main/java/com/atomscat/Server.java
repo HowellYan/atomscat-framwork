@@ -2,6 +2,7 @@ package com.atomscat;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import ratpack.spring.config.EnableRatpack;
 
 /**
@@ -10,6 +11,7 @@ import ratpack.spring.config.EnableRatpack;
  */
 @SpringBootApplication
 @EnableRatpack
+@EnableCaching
 public class Server {
 
     public static void main(String[] args) {
