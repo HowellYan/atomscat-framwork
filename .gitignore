@@ -25,3 +25,4 @@ git.pub
 /*.iml
 rebel.xml
 build/
+.gradle
