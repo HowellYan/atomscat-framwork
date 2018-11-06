@@ -11,5 +11,26 @@
 
     <artifactId>grpc-spring-boot</artifactId>
 
+    <properties>
+        <grpcVersion>1.16.1</grpcVersion>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty-shaded</artifactId>
+            <version>${grpcVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+            <version>${grpcVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+            <version>${grpcVersion}</version>
+        </dependency>
+    </dependencies>
 
 </project>
