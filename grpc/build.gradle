@@ -23,8 +23,6 @@ buildscript {
 
 
 def grpcVersion = '1.16.1' // CURRENT_GRPC_VERSION
-def nettyTcNativeVersion = '2.0.7.Final'
-def protobufVersion = '3.5.1'
 def protocVersion = '3.5.1-1'
 
 repositories {
