@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: spark-spring-boot
+server:
+  port: 8030
+atoms:
+  kafka:
+    topics: spark-log
+    groupId: spark-log
+    bootstrap: 192.168.31.166:9092
+    offsetReset: earliest
+    autoCommit: true
+  spark:
+    appName: atomscat-spark
+    master: local[4]
+    checkpointPath: /tmp/order-streaming-data
+    interval: 2
+    streamCount: 2
