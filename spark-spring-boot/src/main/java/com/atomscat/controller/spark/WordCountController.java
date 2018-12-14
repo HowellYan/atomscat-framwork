@@ -5,7 +5,12 @@ import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.StorageLevels;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.streaming.Durations;
+import org.apache.spark.streaming.api.java.JavaDStream;
+import org.apache.spark.streaming.api.java.JavaPairDStream;
+import org.apache.spark.streaming.api.java.JavaReceiverInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,10 +50,36 @@ public class WordCountController {
         List<Tuple2<String, Integer>> output = counts.collect();
         Iterator var7 = output.iterator();
 
+        StringBuffer stringBuffer = new StringBuffer("");
         while(var7.hasNext()) {
             Tuple2<?, ?> tuple = (Tuple2)var7.next();
-            System.out.println(tuple._1() + ": " + tuple._2());
+            System.out.println();
+            stringBuffer.append(tuple._1() + ": " + tuple._2() + "<br/>");
         }
+        return stringBuffer.toString();
+    }
+
+    @RequestMapping(value = "network_word_count", method = RequestMethod.GET)
+    @ResponseBody
+    public String networkWordCount() throws Exception {
+        String[] args = new String[2];
+        args[0] = "127.0.0.1";
+        args[1] = "9999";
+
+        SparkConf conf = new SparkConf().setMaster("local[*]").setAppName("JavaWordCount");
+        JavaReceiverInputDStream<String> lines = javaStreamingContext.socketTextStream(args[0], Integer.parseInt(args[1]), StorageLevels.MEMORY_AND_DISK_SER);
+        JavaDStream<String> words = lines.flatMap((x) -> {
+            return Arrays.asList(SPACE.split(x)).iterator();
+        });
+        JavaPairDStream<String, Integer> wordCounts = words.mapToPair((s) -> {
+            return new Tuple2(s, 1);
+        }).reduceByKey((i1, i2) -> {
+            return Integer.parseInt(i1.toString()) + Integer.parseInt(i2.toString());
+        });
+        wordCounts.print();
+        System.out.println(wordCounts.toString());
+        javaStreamingContext.start();
+        javaStreamingContext.awaitTermination();
         return "ok";
     }
 
