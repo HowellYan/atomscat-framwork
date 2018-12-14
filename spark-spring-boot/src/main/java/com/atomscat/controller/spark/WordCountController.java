@@ -1,5 +1,6 @@
 package com.atomscat.controller.spark;
 
+import com.atomscat.entity.JavaStreamingContextList;
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -30,13 +31,13 @@ public class WordCountController {
     private static final Pattern SPACE = Pattern.compile(" ");
 
     @Autowired
-    private JavaStreamingContext javaStreamingContext;
+    private JavaStreamingContextList javaStreamingContextList;
 
     @RequestMapping(value = "word_count", method = RequestMethod.GET)
     @ResponseBody
     public String wordCount() {
         String path = "/etc/profile";
-        JavaSparkContext sc = javaStreamingContext.sparkContext();
+        JavaSparkContext sc = javaStreamingContextList.getJavaStreamingContextList().get(0).sparkContext();
         JavaRDD<String> lines = sc.textFile(path);
         JavaRDD<String> words = lines.flatMap((s) -> {
             return Arrays.asList(SPACE.split(s)).iterator();
@@ -65,9 +66,8 @@ public class WordCountController {
         String[] args = new String[2];
         args[0] = "127.0.0.1";
         args[1] = "9999";
-
-        SparkConf conf = new SparkConf().setMaster("local[*]").setAppName("JavaWordCount");
-        JavaReceiverInputDStream<String> lines = javaStreamingContext.socketTextStream(args[0], Integer.parseInt(args[1]), StorageLevels.MEMORY_AND_DISK_SER);
+        JavaStreamingContext sc = javaStreamingContextList.getJavaStreamingContextList().get(0);
+        JavaReceiverInputDStream<String> lines = sc.socketTextStream(args[0], Integer.parseInt(args[1]), StorageLevels.MEMORY_AND_DISK_SER);
         JavaDStream<String> words = lines.flatMap((x) -> {
             return Arrays.asList(SPACE.split(x)).iterator();
         });
@@ -78,8 +78,6 @@ public class WordCountController {
         });
         wordCounts.print();
         System.out.println(wordCounts.toString());
-        javaStreamingContext.start();
-        javaStreamingContext.awaitTermination();
         return "ok";
     }
 
