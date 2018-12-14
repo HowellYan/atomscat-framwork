@@ -50,7 +50,7 @@ public class JavaStreamingContextController {
         List<JavaStreamingContext> javaStreamingContexts = new ArrayList<>();
         JavaStreamingContext javaStreamingContext = new JavaStreamingContext(sparkConf, Durations.seconds(sparkProperties.getInterval()));
         // add check point directory
-        javaStreamingContext.checkpoint(sparkProperties.getCheckpointPath());
+        //javaStreamingContext.checkpoint(sparkProperties.getCheckpointPath());
         javaStreamingContexts.add(javaStreamingContext);
         context.getBean(JavaStreamingContextList.class).setJavaStreamingContextList(javaStreamingContexts);
         return "ok";

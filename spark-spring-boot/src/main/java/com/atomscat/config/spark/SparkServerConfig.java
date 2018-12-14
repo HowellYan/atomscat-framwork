@@ -32,7 +32,7 @@ public class SparkServerConfig {
         List<JavaStreamingContext> javaStreamingContexts = new ArrayList<>();
         JavaStreamingContext javaStreamingContext = new JavaStreamingContext(sparkConf(), Durations.seconds(sparkProperties.getInterval()));
         // add check point directory
-        javaStreamingContext.checkpoint(sparkProperties.getCheckpointPath());
+        //javaStreamingContext.checkpoint(sparkProperties.getCheckpointPath());
         javaStreamingContexts.add(javaStreamingContext);
         javaStreamingContextList.setJavaStreamingContextList(javaStreamingContexts);
         return javaStreamingContextList;
