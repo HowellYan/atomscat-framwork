@@ -17,3 +17,7 @@
 在StreamingContext上调用stop()方法，也会关闭SparkContext对象。如果只想关闭StreamingContext对象，设置stop()的可选参数为false。
 一个SparkContext可以重复利用创建多个StreamingContext，只要在创建下一个StreamingContext之前停止前一个StreamingContext（而不停止SparkContext）即可。
 ```
+
+```
+java -Dspring.profiles.active=dev spark-spring-boot-1.0-SNAPSHOT.jar
+```
