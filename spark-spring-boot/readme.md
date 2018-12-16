@@ -19,5 +19,15 @@
 ```
 
 ```
-java -Dspring.profiles.active=dev spark-spring-boot-1.0-SNAPSHOT.jar
+java -Dspring.profiles.active=dev -jar spark-spring-boot-1.0-SNAPSHOT.jar
+```
+```
+master:
+local:  本地以一个worker线程运行(例如非并行的情况).
+local[K]:  本地以K worker 线程 (理想情况下, K设置为你机器的CPU核数).
+local[*]:  本地以本机同样核数的线程运行.
+spark://HOST:PORT:  连接到指定的Spark standalone cluster master. 端口是你的master集群配置的端口，缺省值为7077.
+mesos://HOST:PORT:  连接到指定的Mesos 集群. Port是你配置的mesos端口， 缺省是5050. 或者如果Mesos使用ZOoKeeper,格式为 mesos://zk://....
+yarn-client:  以client模式连接到YARN cluster. 集群的位置基于HADOOP_CONF_DIR 变量找到.
+yarn-cluster:  以cluster模式连接到YARN cluster. 集群的位置基于HADOOP_CONF_DIR 变量找到.
 ```

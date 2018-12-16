@@ -12,7 +12,7 @@ atoms:
     autoCommit: true
   spark:
     appName: atomscat-spark
-    master: local[4]
+    master: yarn-cluster
     checkpointPath: /tmp/order-streaming-data
     interval: 2
     streamCount: 2
