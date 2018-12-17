@@ -7,7 +7,7 @@ spark-submit  --master  spark://master:7077 --class com.atomscat.streaming.GetWo
  
  
 spark-submit  --master  spark://master:7077 --class com.atomscat.streaming.GetWordCountByKafka \
---driver-class-path=/tools/spark-task-1.0-SNAPSHOT-dist/spark-streaming-kafka-0-10_2.12-2.4.0.jar \
+--driver-class-path=/tools/spark-task-1.0-SNAPSHOT-dist/spark-streaming-kafka-0-10_2.12-2.4.0.jar:/tools/spark-task-1.0-SNAPSHOT-dist/spark-streaming_2.12-2.4.0.jar \
 /tools/git/atomscat-framwork/spark-task/target/spark-task-1.0-SNAPSHOT.jar
   
   
