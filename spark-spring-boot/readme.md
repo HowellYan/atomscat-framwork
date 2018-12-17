@@ -21,6 +21,9 @@
 ```
 java -Dspring.profiles.active=dev -jar spark-spring-boot-1.0-SNAPSHOT.jar
 java -Dspring.profiles.active=prod -jar spark-spring-boot-1.0-SNAPSHOT.jar
+spark-submit  --master  spark://master:7077 --class com.atomscat.streaming.GetWordCountByKafka spark-spring-boot/target/spark-spring-boot-1.0-SNAPSHOT.jar
+spark-submit  --master  spark://master:7077 --class com.atomscat.Server spark-spring-boot/target/spark-spring-boot-1.0-SNAPSHOT.jar
+
 ```
 ```
 master:
