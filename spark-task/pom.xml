@@ -90,17 +90,17 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
+                            <!--<descriptorRefs>-->
+                                <!--<descriptorRef>jar-with-dependencies</descriptorRef>-->
+                            <!--</descriptorRefs>-->
                             <archive>
                                 <manifest>
                                     <mainClass>com.atomscat.streaming.GetWordCountByKafka</mainClass>
                                 </manifest>
                             </archive>
-                            <!--<descriptors>-->
-                                <!--<descriptor>src/main/assembly/assembly.xml</descriptor>-->
-                            <!--</descriptors>-->
+                            <descriptors>
+                                <descriptor>src/main/assembly/assembly.xml</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>
