@@ -2,7 +2,7 @@ spring:
   application:
     name: spark-spring-boot
 server:
-  port: 8080
+  port: 9898
 atoms:
   kafka:
     topics: spark-log

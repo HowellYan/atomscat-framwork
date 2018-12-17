@@ -20,6 +20,7 @@
 
 ```
 java -Dspring.profiles.active=dev -jar spark-spring-boot-1.0-SNAPSHOT.jar
+java -Dspring.profiles.active=prod -jar spark-spring-boot-1.0-SNAPSHOT.jar
 ```
 ```
 master:
