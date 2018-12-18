@@ -18,8 +18,8 @@ public class SendDataToKafka {
         String topics = "spark-als";
         Set<String> topicsSet = new HashSet(Arrays.asList(topics.split(",")));
         Map<String, Object> kafkaParams = new HashMap();
-        kafkaParams.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        kafkaParams.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        kafkaParams.put("key.serializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        kafkaParams.put("value.serializer", "org.apache.kafka.common.serialization.StringDeserializer");
         kafkaParams.put("bootstrap.servers", brokers);
         kafkaParams.put("group.id", topics);
 
@@ -35,8 +35,8 @@ public class SendDataToKafka {
         String topics = "spark-als";
         Set<String> topicsSet = new HashSet(Arrays.asList(topics.split(",")));
         Map<String, Object> kafkaParams = new HashMap();
-        kafkaParams.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        kafkaParams.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        kafkaParams.put("key.serializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        kafkaParams.put("value.serializer", "org.apache.kafka.common.serialization.StringDeserializer");
         kafkaParams.put("bootstrap.servers", brokers);
         kafkaParams.put("group.id", topics);
         Rating[] ratingsList = bestModel.recommendProducts(2096876, 3);
