@@ -13,9 +13,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.logging.Logger;
 
 
 public class TrainALSModel {
+    private final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(TrainALSModel.class);
 
     public static void train(JavaSparkContext sc, JavaPairRDD<String, Integer> rdd, Map<String, String> userMap) {
         JavaRDD<Rating> ratings = rdd.map(new Function<Tuple2<String, Integer>, Rating>() {
@@ -42,7 +44,7 @@ public class TrainALSModel {
         userMap.forEach(new BiConsumer<String, String>() {
             @Override
             public void accept(String s, String s2) {
-                System.out.println(s+","+s2);
+                log.info(s+","+s2);
             }
         });
 
@@ -84,7 +86,7 @@ public class TrainALSModel {
         userMap.forEach(new BiConsumer<String, String>() {
             @Override
             public void accept(String s, String s2) {
-                System.out.println(s+","+s2);
+                log.info(s+","+s2);
             }
         });
 
