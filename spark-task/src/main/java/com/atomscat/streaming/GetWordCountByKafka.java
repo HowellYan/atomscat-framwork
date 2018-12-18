@@ -4,6 +4,7 @@ package com.atomscat.streaming;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.api.java.function.VoidFunction2;
@@ -53,7 +54,6 @@ public final class GetWordCountByKafka {
 
         SparkSession sparkSession = SparkSession.builder().sparkContext(jssc.ssc().sc()).getOrCreate();
         List<ALSModel> alsModelList = new ArrayList<>();
-
         /**
          * clear data
          */
@@ -79,7 +79,8 @@ public final class GetWordCountByKafka {
                 alsModel.setGoodsCategory(goodsCategory);
                 alsModel.setTime(time);
                 alsModelList.add(alsModel);
-                broadcastList = jssc.sparkContext().broadcast(alsModelList);
+                JavaSparkContext sc = JavaSparkContext.fromSparkContext(sparkSession.sparkContext());
+                broadcastList = sc.broadcast(alsModelList);
                 return new Tuple2<String, Integer>(goodsCategory + "," + userId + "," + params + "," + time, 1);
             }
         }).foreachRDD(new VoidFunction2<JavaPairRDD<String, Integer>, Time>() {
