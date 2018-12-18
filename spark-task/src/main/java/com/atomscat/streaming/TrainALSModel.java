@@ -7,6 +7,7 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.mllib.recommendation.ALS;
 import org.apache.spark.mllib.recommendation.MatrixFactorizationModel;
 import org.apache.spark.mllib.recommendation.Rating;
+import org.apache.spark.sql.SparkSession;
 import scala.Tuple2;
 
 import java.text.SimpleDateFormat;
@@ -16,7 +17,8 @@ import java.util.Date;
 public class TrainALSModel {
     private final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(TrainALSModel.class);
 
-    public static void train(JavaSparkContext sc, JavaPairRDD<String, Integer> rdd, String user) {
+    public static void train(JavaPairRDD<String, Integer> rdd, String user) {
+        //JavaSparkContext sc = JavaSparkContext.fromSparkContext(sparkSession.sparkContext());
         JavaRDD<Rating> ratings = rdd.map(new Function<Tuple2<String, Integer>, Rating>() {
             @Override
             public Rating call(Tuple2<String, Integer> v1) throws Exception {

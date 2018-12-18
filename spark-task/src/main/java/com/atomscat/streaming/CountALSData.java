@@ -57,7 +57,7 @@ public class CountALSData {
             @Override
             public void call(Tuple2<String, Integer> stringIntegerTuple2) throws Exception {
                 String[] strings = stringIntegerTuple2._1().split(",");
-                TrainALSModel.train(sc, counts, strings[1]);
+                TrainALSModel.train(counts, strings[1]);
             }
         });
 
