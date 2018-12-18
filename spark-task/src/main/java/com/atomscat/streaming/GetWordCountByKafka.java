@@ -46,7 +46,7 @@ public final class GetWordCountByKafka {
         JavaInputDStream<ConsumerRecord<String, String>> messages = KafkaUtils.createDirectStream(jssc, LocationStrategies.PreferConsistent(), ConsumerStrategies.Subscribe(topicsSet, kafkaParams));
         JavaDStream<String> lines = messages.map(ConsumerRecord::value);
 
-        SparkSession sparkSession = new SparkSession(jssc.ssc().sc());
+        SparkSession sparkSession = SparkSession.builder().appName("spark-session").sparkContext(jssc.ssc().sc()).getOrCreate();
 
         /**
          * clear data
