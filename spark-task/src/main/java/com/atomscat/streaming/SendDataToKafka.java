@@ -27,7 +27,7 @@ public class SendDataToKafka {
 
         KafkaProducer kafkaProducer =  new KafkaProducer<String,String>(kafkaParams);
         for (Rating rating : ratingsList) {
-            ProducerRecord record = new ProducerRecord<String,String>(String.valueOf(rating.user()), String.valueOf(rating.product()));
+            ProducerRecord record = new ProducerRecord<String, String>(topics, String.valueOf(rating.user()), String.valueOf(rating.product()));
             kafkaProducer.send(record);
         }
     }
@@ -46,7 +46,7 @@ public class SendDataToKafka {
         Rating[] ratingsList = bestModel.recommendProducts(2096876, 3);
         KafkaProducer kafkaProducer =  new KafkaProducer<String,String>(kafkaParams);
         for (Rating rating : ratingsList) {
-            ProducerRecord record = new ProducerRecord<String,String>(String.valueOf(rating.user()), String.valueOf(rating.product()));
+            ProducerRecord record = new ProducerRecord<String,String>(topics, String.valueOf(rating.user()), String.valueOf(rating.product()));
             kafkaProducer.send(record);
         }
     }
