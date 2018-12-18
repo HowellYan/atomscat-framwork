@@ -3,6 +3,7 @@ package com.atomscat.streaming;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.sql.SparkSession;
 import scala.Tuple2;
 
@@ -13,8 +14,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class CountALSData {
-// , String user
-    public static void read(SparkSession sparkSession) {
+
+    public static void read(SparkSession sparkSession, JavaRDD<Tuple2<String, Integer>> javaPairRDD) {
         JavaSparkContext sc = JavaSparkContext.fromSparkContext(sparkSession.sparkContext());
         JavaRDD<String> lines = sc.textFile("hdfs://slaves1:9000/spark/als_*");
         String user = "2096876";
@@ -51,7 +52,15 @@ public class CountALSData {
             return new Tuple2<>(strings[1] + "," + strings[2], 1);
         });
         JavaPairRDD<String, Integer> counts = stringIntegerJavaPairRDD.reduceByKey((i1, i2) -> i1 + i2);
-        TrainALSModel.train(sc, counts, user);
+
+        javaPairRDD.foreach(new VoidFunction<Tuple2<String, Integer>>() {
+            @Override
+            public void call(Tuple2<String, Integer> stringIntegerTuple2) throws Exception {
+                String[] strings = stringIntegerTuple2._1().split(",");
+                TrainALSModel.train(sc, counts, strings[1]);
+            }
+        });
+
     }
 
 

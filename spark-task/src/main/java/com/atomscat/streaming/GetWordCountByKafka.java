@@ -4,11 +4,9 @@ package com.atomscat.streaming;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.api.java.function.VoidFunction2;
-import org.apache.spark.broadcast.Broadcast;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.Time;
@@ -31,9 +29,6 @@ public final class GetWordCountByKafka {
     private static final Pattern Params = Pattern.compile("id\\\\\":\\\\\"[a-zA-Z0-9._-]+");
     private static final Pattern GoodsCategory = Pattern.compile("goodsCategory\\\\\":\\\\\"[a-zA-Z0-9._-]+");
 
-    // 共享变量
-    private static volatile Broadcast<List<ALSModel>> broadcastList = null;
-
 
     public GetWordCountByKafka() {
     }
@@ -53,7 +48,7 @@ public final class GetWordCountByKafka {
         JavaDStream<String> lines = messages.map(ConsumerRecord::value);
 
         SparkSession sparkSession = SparkSession.builder().sparkContext(jssc.ssc().sc()).getOrCreate();
-        List<ALSModel> alsModelList = new ArrayList<>();
+
         /**
          * clear data
          */
@@ -73,21 +68,13 @@ public final class GetWordCountByKafka {
                 String goodsCategory = getVal(s, GoodsCategory).replace("goodsCategory\\\":\\\"", "");
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
                 String time = simpleDateFormat.format(new Date());
-                ALSModel alsModel = new ALSModel();
-                alsModel.setProductID(params);
-                alsModel.setUserID(userId);
-                alsModel.setGoodsCategory(goodsCategory);
-                alsModel.setTime(time);
-                alsModelList.add(alsModel);
-                JavaSparkContext sc = JavaSparkContext.fromSparkContext(sparkSession.sparkContext());
-                broadcastList = sc.broadcast(alsModelList);
                 return new Tuple2<String, Integer>(goodsCategory + "," + userId + "," + params + "," + time, 1);
             }
         }).foreachRDD(new VoidFunction2<JavaPairRDD<String, Integer>, Time>() {
             @Override
             public void call(JavaPairRDD<String, Integer> v1, Time v2) throws Exception {
-                if (v1.rdd().count() > 0 && broadcastList.getValue().size() > 0) {
-                    CountALSData.read(sparkSession);
+                if (v1.rdd().count() > 0) {
+                    CountALSData.read(sparkSession, v1.rdd().toJavaRDD());
                     v1.rdd().saveAsTextFile("hdfs://slaves1:9000/spark/als_" + new Date().getTime());
                 }
             }
