@@ -47,7 +47,7 @@ public final class GetWordCountByKafka {
         String brokers = args[0];
         String topics = args[1];
         SparkConf sparkConf = (new SparkConf()).setAppName("JavaDirectKafkaWordCount").setMaster("spark://master:7077");
-        MyJavaStreamingContext jssc = new MyJavaStreamingContext(sparkConf, Durations.seconds(2L));
+        JavaStreamingContext jssc = new MyJavaStreamingContext(sparkConf, Durations.seconds(2L));
         Set<String> topicsSet = new HashSet(Arrays.asList(topics.split(",")));
         Map<String, Object> kafkaParams = new HashMap();
         kafkaParams.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
