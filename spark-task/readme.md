@@ -26,3 +26,7 @@ spark-submit --master spark://master:7077 --class com.atomscat.streaming.GetWord
 
 cp /tools/spark-task-1.0-SNAPSHOT-dist/spark-streaming-kafka-0-10_2.11-2.4.0.jar ./
 cp /tools/spark-task-1.0-SNAPSHOT-dist/lib/kafka-clients-2.0.1.jar ./
+
+
+
+./bin/kafka-console-consumer.sh --bootstrap-server 192.168.31.166:9092 --topic spark-als --from-beginning

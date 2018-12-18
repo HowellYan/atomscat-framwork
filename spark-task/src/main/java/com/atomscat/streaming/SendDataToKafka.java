@@ -29,4 +29,21 @@ public class SendDataToKafka {
             kafkaProducer.send(record);
         }
     }
+
+    public static void sendData(MatrixFactorizationModel bestModel){
+        String brokers = "192.168.31.166:9092";
+        String topics = "spark-als";
+        Set<String> topicsSet = new HashSet(Arrays.asList(topics.split(",")));
+        Map<String, Object> kafkaParams = new HashMap();
+        kafkaParams.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        kafkaParams.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        kafkaParams.put("bootstrap.servers", brokers);
+        kafkaParams.put("group.id", topics);
+        Rating[] ratingsList = bestModel.recommendProducts(2096876, 3);
+        KafkaProducer kafkaProducer =  new KafkaProducer<String,String>(kafkaParams);
+        for (Rating rating : ratingsList) {
+            ProducerRecord record = new ProducerRecord<String,String>(String.valueOf(rating.user()), String.valueOf(rating.product()));
+            kafkaProducer.send(record);
+        }
+    }
 }

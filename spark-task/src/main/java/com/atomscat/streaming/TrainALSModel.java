@@ -41,15 +41,15 @@ public class TrainALSModel {
         MatrixFactorizationModel bestModel = ALS.train(ratings.rdd(), bestRank, bestNumIter, bestLamba);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSSZ");
         String time = simpleDateFormat.format(new Date());
-        userMap.forEach(new BiConsumer<String, String>() {
-            @Override
-            public void accept(String s, String s2) {
-                SendDataToKafka.sendData(sc, s);
-            }
-        });
 
-
+        SendDataToKafka.sendData(bestModel);
         bestModel.save(sc.sc(), "hdfs://slaves1:9000/model/all_" + time);
+//        userMap.forEach(new BiConsumer<String, String>() {
+//            @Override
+//            public void accept(String s, String s2) {
+//                SendDataToKafka.sendData(sc, s);
+//            }
+//        });
         //提取推荐的用户列表
 //        /**
 //         *  @param user the user to recommend products to
