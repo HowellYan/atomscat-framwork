@@ -10,10 +10,8 @@ import java.util.*;
 
 public class SendDataToKafka {
 
-    public static void sendData(JavaSparkContext sc, String user){
-        MatrixFactorizationModel bestModel2 = MatrixFactorizationModel.load(sc.sc(), "hdfs://slaves1:9000/model/all_*");
-        Rating[] ratingsList = bestModel2.recommendProducts(Integer.valueOf(user), 3);
-
+    public static void sendData(MatrixFactorizationModel bestModel, String user){
+        Rating[] ratingsList = bestModel.recommendProducts(Integer.valueOf(user), 3);
         String brokers = "192.168.31.166:9092";
         String topics = "spark-als";
         Set<String> topicsSet = new HashSet(Arrays.asList(topics.split(",")));
@@ -27,7 +25,7 @@ public class SendDataToKafka {
 
         KafkaProducer kafkaProducer =  new KafkaProducer<String,String>(kafkaParams);
         for (Rating rating : ratingsList) {
-            ProducerRecord record = new ProducerRecord<String, String>(topics, String.valueOf(rating.user()), String.valueOf(rating.product()));
+            ProducerRecord record = new ProducerRecord<String, String>(topics, String.valueOf(rating.user())+","+String.valueOf(rating.product()));
             kafkaProducer.send(record);
         }
     }
@@ -46,7 +44,7 @@ public class SendDataToKafka {
         Rating[] ratingsList = bestModel.recommendProducts(2096876, 3);
         KafkaProducer kafkaProducer =  new KafkaProducer<String,String>(kafkaParams);
         for (Rating rating : ratingsList) {
-            ProducerRecord record = new ProducerRecord<String,String>(topics, String.valueOf(rating.user()), String.valueOf(rating.product()));
+            ProducerRecord record = new ProducerRecord<String,String>(topics, String.valueOf(rating.user())+","+String.valueOf(rating.product()));
             kafkaProducer.send(record);
         }
     }

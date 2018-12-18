@@ -42,14 +42,13 @@ public class TrainALSModel {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSSZ");
         String time = simpleDateFormat.format(new Date());
 
-        SendDataToKafka.sendData(bestModel);
-        bestModel.save(sc.sc(), "hdfs://slaves1:9000/model/all_" + time);
-        userMap.forEach(new BiConsumer<String, String>() {
-            @Override
-            public void accept(String s, String s2) {
-                SendDataToKafka.sendData(sc, s);
-            }
-        });
+        //SendDataToKafka.sendData(bestModel);
+        //bestModel.save(sc.sc(), "hdfs://slaves1:9000/model/all_" + time);
+        for(Map.Entry<String, String> entry : userMap.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            SendDataToKafka.sendData(bestModel,key);
+        }
         //提取推荐的用户列表
 //        /**
 //         *  @param user the user to recommend products to
