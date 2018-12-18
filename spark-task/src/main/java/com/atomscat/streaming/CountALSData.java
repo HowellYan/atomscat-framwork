@@ -29,6 +29,26 @@ public class CountALSData {
             return new Tuple2<String, Tuple2<String, Integer>>(strings[0], new Tuple2(strings[1] + "," + strings[2], s1._2()));
         }).groupByKey().collectAsMap();
 
+        stringIterableJavaPairRDD.forEach(new BiConsumer<String, Iterable<Tuple2<String, Integer>>>() {
+            @Override
+            public void accept(String goodsCategory, Iterable<Tuple2<String, Integer>> tuple2s) {
+                List<Tuple2<String, Integer>> tuple2Arrays = new ArrayList<>();
+                tuple2s.forEach(new Consumer<Tuple2<String, Integer>>() {
+                    @Override
+                    public void accept(Tuple2<String, Integer> stringIntegerTuple2) {
+                        tuple2Arrays.add(stringIntegerTuple2);
+                    }
+                });
+                javaPairRDD.collect().forEach(new Consumer<Tuple2<String, Integer>>() {
+                    @Override
+                    public void accept(Tuple2<String, Integer> stringIntegerTuple2) {
+                        TrainALSModel.train(sc.parallelizePairs(tuple2Arrays), goodsCategory, stringIntegerTuple2._1().split(",")[1]);
+                    }
+                });
+            }
+        });
+
+
         /**
          * all prod rating
          */
@@ -43,21 +63,6 @@ public class CountALSData {
             @Override
             public void accept(Tuple2<String, Integer> stringIntegerTuple2) {
                 TrainALSModel.train(counts, stringIntegerTuple2._1().split(",")[1]);
-
-                stringIterableJavaPairRDD.forEach(new BiConsumer<String, Iterable<Tuple2<String, Integer>>>() {
-                    @Override
-                    public void accept(String goodsCategory, Iterable<Tuple2<String, Integer>> tuple2s) {
-                        List<Tuple2<String, Integer>> tuple2Arrays = new ArrayList<>();
-                        tuple2s.forEach(new Consumer<Tuple2<String, Integer>>() {
-                            @Override
-                            public void accept(Tuple2<String, Integer> stringIntegerTuple2) {
-                                tuple2Arrays.add(stringIntegerTuple2);
-                            }
-                        });
-                        TrainALSModel.train(sc.parallelizePairs(tuple2Arrays), goodsCategory, stringIntegerTuple2._1().split(",")[1]);
-                    }
-                });
-
             }
         });
 

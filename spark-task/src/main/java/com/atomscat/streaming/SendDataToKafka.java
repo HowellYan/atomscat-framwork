@@ -10,7 +10,7 @@ import java.util.*;
 public class SendDataToKafka {
 
     public static void sendData(MatrixFactorizationModel bestModel, String user, String goodsCategory) {
-        Rating[] ratingsList = bestModel.recommendProducts(Integer.valueOf(user), 3);
+        Rating[] ratingsList = bestModel.recommendProducts(Integer.valueOf(user), 2);
         String brokers = "192.168.31.166:9092";
         String topics = "spark-als";
         Set<String> topicsSet = new HashSet(Arrays.asList(topics.split(",")));
