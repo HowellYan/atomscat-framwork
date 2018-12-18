@@ -18,7 +18,6 @@ public class TrainALSModel {
     private final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(TrainALSModel.class);
 
     public static void train(JavaPairRDD<String, Integer> rdd, String user) {
-        //JavaSparkContext sc = JavaSparkContext.fromSparkContext(sparkSession.sparkContext());
         JavaRDD<Rating> ratings = rdd.map(new Function<Tuple2<String, Integer>, Rating>() {
             @Override
             public Rating call(Tuple2<String, Integer> v1) throws Exception {
@@ -38,25 +37,12 @@ public class TrainALSModel {
          *    * @param lambda     regularization parameter:正则项系数
          */
         MatrixFactorizationModel bestModel = ALS.train(ratings.rdd(), bestRank, bestNumIter, bestLamba);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSSZ");
-        String time = simpleDateFormat.format(new Date());
+        SendDataToKafka.sendData(bestModel, user, "all");
 
-        //SendDataToKafka.sendData(bestModel);
-        //bestModel.save(sc.sc(), "hdfs://slaves1:9000/model/all_" + time);
-        SendDataToKafka.sendData(bestModel, user);
-
-        //提取推荐的用户列表
-//        /**
-//         *  @param user the user to recommend products to
-//         *  @param num how many products to return.
-//         */
-//        int userID = 2096876;
-//        Rating[] ratingsList = bestModel.recommendProducts(userID, 3);
-//        sc.parallelize(Arrays.asList(ratingsList)).saveAsTextFile("hdfs://127.0.0.1:9000/recommend/"+userID+"_"+new Date().getTime());
     }
 
 
-    public static void train(JavaPairRDD<String, Integer> rdd, String key, JavaSparkContext sc, String user) {
+    public static void train(JavaPairRDD<String, Integer> rdd, String user, String goodsCategory) {
         JavaRDD<Rating> ratings = rdd.map(new Function<Tuple2<String, Integer>, Rating>() {
             @Override
             public Rating call(Tuple2<String, Integer> v1) throws Exception {
@@ -76,20 +62,7 @@ public class TrainALSModel {
          *    * @param lambda     regularization parameter:正则项系数
          */
         MatrixFactorizationModel bestModel = ALS.train(ratings.rdd(), bestRank, bestNumIter, bestLamba);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSSZ");
-        String time = simpleDateFormat.format(new Date());
-
-        //bestModel.save(sc.sc(), "hdfs://slaves1:9000/model/goodsCategory_" + key + "_" + time);
-
-        // MatrixFactorizationModel bestModel2 = MatrixFactorizationModel.load(sc.sc(), "hdfs://slaves1:9000/model/goodsCategory_" + key + "_*");
-        //提取推荐的用户列表
-//        /**
-//         *  @param user the user to recommend products to
-//         *  @param num how many products to return.
-//         */
-//        int userID = 2096876;
-//        Rating[] ratingsList = bestModel2.recommendProducts(userID, 3);
-//        sc.parallelize(Arrays.asList(ratingsList)).saveAsTextFile("hdfs://127.0.0.1:9000/recommend/" + userID + "_" + key + "_" + new Date().getTime());
+        SendDataToKafka.sendData(bestModel, user, goodsCategory);
     }
 
 }
