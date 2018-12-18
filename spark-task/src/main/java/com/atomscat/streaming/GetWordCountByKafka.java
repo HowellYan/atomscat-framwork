@@ -62,7 +62,6 @@ public final class GetWordCountByKafka {
         lines.filter(new Function<String, Boolean>() {
             @Override
             public Boolean call(String v1) throws Exception {
-                userMap = new HashMap<>();
                 if (v1.indexOf("/api/goods/detail") > 0 && v1.indexOf("UserId: null") < 0) {
                     return true;
                 }
