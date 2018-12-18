@@ -13,11 +13,11 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class CountALSData {
-
-    public static void read(SparkSession sparkSession, String user) {
+// , String user
+    public static void read(SparkSession sparkSession) {
         JavaSparkContext sc = JavaSparkContext.fromSparkContext(sparkSession.sparkContext());
         JavaRDD<String> lines = sc.textFile("hdfs://slaves1:9000/spark/als_*");
-
+        String user = "2096876";
         /**
          * group by goodsCategory`s prod rating
          */
