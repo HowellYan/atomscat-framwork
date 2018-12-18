@@ -16,7 +16,7 @@ import java.util.Date;
 
 public class TrainALSModel {
     public static void main(String[] args) {
-        String path = "hdfs://127.0.0.1:9000/spark/count_als_" + new Date().getTime();
+        String path = "hdfs://slaves1:9000/spark/count_als_" + new Date().getTime();
         SparkConf sparkConf = (new SparkConf()).setAppName("ModelTraining");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         //train(sc,path);
@@ -80,7 +80,7 @@ public class TrainALSModel {
         String time = simpleDateFormat.format(new Date());
         bestModel.save(sc.sc(), "hdfs://slaves1:9000/model/goodsCategory_" + key + "_" + time);
 
-        MatrixFactorizationModel bestModel2 = MatrixFactorizationModel.load(sc.sc(), "hdfs://127.0.0.1:9000/model/goodsCategory_" + key + "_*");
+        MatrixFactorizationModel bestModel2 = MatrixFactorizationModel.load(sc.sc(), "hdfs://slaves1:9000/model/goodsCategory_" + key + "_*");
         //提取推荐的用户列表
 //        /**
 //         *  @param user the user to recommend products to
