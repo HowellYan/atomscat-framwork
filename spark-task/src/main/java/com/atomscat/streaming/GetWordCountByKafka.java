@@ -46,7 +46,7 @@ public final class GetWordCountByKafka {
         JavaInputDStream<ConsumerRecord<String, String>> messages = KafkaUtils.createDirectStream(jssc, LocationStrategies.PreferConsistent(), ConsumerStrategies.Subscribe(topicsSet, kafkaParams));
         JavaDStream<String> lines = messages.map(ConsumerRecord::value);
 
-        SparkSession sparkSession = SparkSession.builder().appName("spark-session").sparkContext(jssc.ssc().sc()).getOrCreate();
+
 
         /**
          * clear data
@@ -72,6 +72,7 @@ public final class GetWordCountByKafka {
         }).foreachRDD(new VoidFunction2<JavaPairRDD<String, Integer>, Time>() {
             @Override
             public void call(JavaPairRDD<String, Integer> v1, Time v2) throws Exception {
+                SparkSession sparkSession = SparkSession.builder().appName("spark-session").sparkContext(jssc.ssc().sc()).getOrCreate();
                 if (v1.rdd().count() > 0) {
                     v1.rdd().toJavaRDD().foreach((T) -> {
                         String[] strings = T._1().split(",");
