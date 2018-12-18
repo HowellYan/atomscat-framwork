@@ -29,7 +29,7 @@ public class TrainALSModel {
 
         int bestRank = 1;
         double bestLamba = 0.0;
-        int bestNumIter = 3;
+        int bestNumIter = 1;
         /**
          *    * @param ratings    RDD of [[Rating]] objects with userID, productID, and rating
          *    * @param rank       number of features to use (also referred to as the number of latent factors):潜在因素
@@ -54,7 +54,7 @@ public class TrainALSModel {
 
         int bestRank = 1;
         double bestLamba = 0.0;
-        int bestNumIter = 3;
+        int bestNumIter = 1;
         /**
          *    * @param ratings    RDD of [[Rating]] objects with userID, productID, and rating
          *    * @param rank       number of features to use (also referred to as the number of latent factors):潜在因素
