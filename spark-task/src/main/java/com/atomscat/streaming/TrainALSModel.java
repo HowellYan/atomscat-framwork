@@ -44,7 +44,7 @@ public class TrainALSModel {
         userMap.forEach(new BiConsumer<String, String>() {
             @Override
             public void accept(String s, String s2) {
-                log.info(s+","+s2);
+                SendDataToKafka.sendData(sc, s);
             }
         });
 
