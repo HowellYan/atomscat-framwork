@@ -84,8 +84,8 @@ public final class GetWordCountByKafka {
                 if (v1.rdd().count() > 0) {
                     v1.rdd().toJavaRDD().foreach((x)->{
                         String[] strings = x._1().split(",");
-                        CountALSData.read(jssc.sparkContext(), strings[1]);
                     });
+                    //CountALSData.read(jssc.sparkContext(), strings[1]);
                     v1.rdd().saveAsTextFile("hdfs://slaves1:9000/spark/als_" + new Date().getTime());
                 }
             }
