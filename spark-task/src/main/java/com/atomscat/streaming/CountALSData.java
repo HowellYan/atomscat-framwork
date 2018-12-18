@@ -52,7 +52,7 @@ public class CountALSData {
                 String[] strings = stringIntegerTuple2._1().replaceAll("\\(", "").replaceAll("\\)", "").split(",");
                 String user = strings[1];
                 String goodsCategory = strings[0];
-                Iterable<Tuple2<String, Integer>> iterable = stringIterableJavaPairRDD.get("goodsCategory");
+                Iterable<Tuple2<String, Integer>> iterable = stringIterableJavaPairRDD.get(goodsCategory);
                 List<Tuple2<String, Integer>> tuple2Arrays = new ArrayList<>();
                 iterable.forEach(new Consumer<Tuple2<String, Integer>>() {
                     @Override
