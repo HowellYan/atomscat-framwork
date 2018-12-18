@@ -8,6 +8,7 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.api.java.function.VoidFunction2;
+import org.apache.spark.sql.SparkSession;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.Time;
 import org.apache.spark.streaming.api.java.JavaDStream;
@@ -36,27 +37,20 @@ public final class GetWordCountByKafka {
     }
 
     public static void main(String[] args) throws Exception {
-        args = new String[2];
-        args[0] = "192.168.31.166:9092";
-        args[1] = "spark-log";
-        if (args.length < 2) {
-            System.err.println("Usage: JavaDirectKafkaWordCount <brokers> <topics>\n  <brokers> is a list of one or more Kafka brokers\n  <topics> is a list of one or more kafka topics to consume from\n\n");
-            System.exit(1);
-        }
-
-        String brokers = args[0];
-        String topics = args[1];
+        String brokers = "192.168.31.166:9092";
+        String topics = "spark-log";
         SparkConf sparkConf = (new SparkConf()).setAppName("JavaDirectKafkaWordCount").setMaster("spark://master:7077");
-        Session.jssc = new JavaStreamingContext(sparkConf, Durations.seconds(2L));
+        JavaStreamingContext jssc = new JavaStreamingContext(sparkConf, Durations.seconds(2L));
         Set<String> topicsSet = new HashSet(Arrays.asList(topics.split(",")));
         Map<String, Object> kafkaParams = new HashMap();
         kafkaParams.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         kafkaParams.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         kafkaParams.put("bootstrap.servers", brokers);
         kafkaParams.put("group.id", topics);
-        JavaInputDStream<ConsumerRecord<String, String>> messages = KafkaUtils.createDirectStream(Session.jssc, LocationStrategies.PreferConsistent(), ConsumerStrategies.Subscribe(topicsSet, kafkaParams));
+        JavaInputDStream<ConsumerRecord<String, String>> messages = KafkaUtils.createDirectStream(jssc, LocationStrategies.PreferConsistent(), ConsumerStrategies.Subscribe(topicsSet, kafkaParams));
         JavaDStream<String> lines = messages.map(ConsumerRecord::value);
 
+        SparkSession sparkSession = new SparkSession(jssc.ssc().sc());
 
         /**
          * clear data
@@ -83,16 +77,16 @@ public final class GetWordCountByKafka {
             @Override
             public void call(JavaPairRDD<String, Integer> v1, Time v2) throws Exception {
                 if (v1.rdd().count() > 0) {
-                    v1.rdd().toJavaRDD().foreach((x)->{
-                        String[] strings = x._1().split(",");
-                        CountALSData.read(strings[1]);
+                    v1.rdd().toJavaRDD().foreach((T)->{
+                        String[] strings = T._1().split(",");
+                        CountALSData.read(sparkSession, strings[1]);
                     });
                     v1.rdd().saveAsTextFile("hdfs://slaves1:9000/spark/als_" + new Date().getTime());
                 }
             }
         });
-        Session.jssc.start();
-        Session.jssc.awaitTermination();
+        jssc.start();
+        jssc.awaitTermination();
     }
 
     public static String getVal(String str, Pattern p) {
