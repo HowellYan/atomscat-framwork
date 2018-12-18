@@ -47,17 +47,17 @@ public class CountALSData {
         /**
          * all prod rating
          */
-        JavaPairRDD<String, Integer> stringIntegerJavaPairRDD = lines.mapToPair((s) -> {
-            String[] strings = s.split(",");
-            return new Tuple2<>(strings[1] + "," + strings[2], 1);
-        });
-        JavaPairRDD<String, Integer> counts = stringIntegerJavaPairRDD.reduceByKey((i1, i2) -> i1 + i2);
 
         javaPairRDD.foreach(new VoidFunction<Tuple2<String, Integer>>() {
             @Override
             public void call(Tuple2<String, Integer> stringIntegerTuple2) throws Exception {
-                String[] strings = stringIntegerTuple2._1().split(",");
-                TrainALSModel.train(counts, strings[1]);
+                String[] userList = stringIntegerTuple2._1().split(",");
+                JavaPairRDD<String, Integer> stringIntegerJavaPairRDD = lines.mapToPair((s) -> {
+                    String[] strings = s.split(",");
+                    return new Tuple2<>(strings[1] + "," + strings[2], 1);
+                });
+                JavaPairRDD<String, Integer> counts = stringIntegerJavaPairRDD.reduceByKey((i1, i2) -> i1 + i2);
+                TrainALSModel.train(counts, userList[1]);
             }
         });
 
