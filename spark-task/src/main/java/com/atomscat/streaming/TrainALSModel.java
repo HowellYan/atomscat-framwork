@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 public class TrainALSModel {
     private final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(TrainALSModel.class);
 
-    public static void train(JavaSparkContext sc, JavaPairRDD<String, Integer> rdd, Map<String, String> userMap) {
+    public static void train(JavaSparkContext sc, JavaPairRDD<String, Integer> rdd, String user) {
         JavaRDD<Rating> ratings = rdd.map(new Function<Tuple2<String, Integer>, Rating>() {
             @Override
             public Rating call(Tuple2<String, Integer> v1) throws Exception {
@@ -44,11 +44,8 @@ public class TrainALSModel {
 
         //SendDataToKafka.sendData(bestModel);
         //bestModel.save(sc.sc(), "hdfs://slaves1:9000/model/all_" + time);
-        for(Map.Entry<String, String> entry : userMap.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            SendDataToKafka.sendData(bestModel,key);
-        }
+        SendDataToKafka.sendData(bestModel, user);
+
         //提取推荐的用户列表
 //        /**
 //         *  @param user the user to recommend products to
@@ -60,7 +57,7 @@ public class TrainALSModel {
     }
 
 
-    public static void train(JavaPairRDD<String, Integer> rdd, String key, JavaSparkContext sc, Map<String, String> userMap) {
+    public static void train(JavaPairRDD<String, Integer> rdd, String key, JavaSparkContext sc, String user) {
         JavaRDD<Rating> ratings = rdd.map(new Function<Tuple2<String, Integer>, Rating>() {
             @Override
             public Rating call(Tuple2<String, Integer> v1) throws Exception {
@@ -82,12 +79,6 @@ public class TrainALSModel {
         MatrixFactorizationModel bestModel = ALS.train(ratings.rdd(), bestRank, bestNumIter, bestLamba);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSSZ");
         String time = simpleDateFormat.format(new Date());
-        userMap.forEach(new BiConsumer<String, String>() {
-            @Override
-            public void accept(String s, String s2) {
-                log.info(s+","+s2);
-            }
-        });
 
         //bestModel.save(sc.sc(), "hdfs://slaves1:9000/model/goodsCategory_" + key + "_" + time);
 

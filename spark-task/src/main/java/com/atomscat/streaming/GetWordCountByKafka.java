@@ -29,8 +29,6 @@ public final class GetWordCountByKafka {
     private static final Pattern Params = Pattern.compile("id\\\\\":\\\\\"[a-zA-Z0-9._-]+");
     private static final Pattern GoodsCategory = Pattern.compile("goodsCategory\\\\\":\\\\\"[a-zA-Z0-9._-]+");
 
-    private static Map<String,String> userMap = new HashMap<>();
-
     public GetWordCountByKafka() {
     }
 
@@ -75,7 +73,6 @@ public final class GetWordCountByKafka {
                 String goodsCategory = getVal(s, GoodsCategory).replace("goodsCategory\\\":\\\"", "");
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
                 String time = simpleDateFormat.format(new Date());
-                userMap.put(userId, "");
                 return new Tuple2<String, Integer>(goodsCategory + "," + userId + "," + params + "," + time, 1);
             }
         }).foreachRDD(new VoidFunction2<JavaPairRDD<String, Integer>, Time>() {
@@ -83,7 +80,15 @@ public final class GetWordCountByKafka {
             public void call(JavaPairRDD<String, Integer> v1, Time v2) throws Exception {
                 if (v1.rdd().count() > 0) {
                     v1.rdd().saveAsTextFile("hdfs://slaves1:9000/spark/als_" + new Date().getTime());
-                    CountALSData.read(jssc.sparkContext(), userMap);
+
+                    v1.mapToPair(new PairFunction<Tuple2<String, Integer>, String, Integer>() {
+                        @Override
+                        public Tuple2<String, Integer> call(Tuple2<String, Integer> stringIntegerTuple2) throws Exception {
+                            String[] strings = stringIntegerTuple2._1().split(",");
+                            CountALSData.read(jssc.sparkContext(), strings[1]);
+                            return stringIntegerTuple2;
+                        }
+                    });
                 }
             }
         });

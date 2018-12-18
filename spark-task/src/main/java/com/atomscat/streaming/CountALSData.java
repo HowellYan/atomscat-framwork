@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 public class CountALSData {
 
-    public static void read(JavaSparkContext sc, Map<String, String> userMap) {
+    public static void read(JavaSparkContext sc, String user) {
         //自定义比较器
         //SparkConf sparkConf = (new SparkConf()).setAppName("ModelTraining");
         //JavaSparkContext sc = new JavaSparkContext(sparkConf);
@@ -41,7 +41,7 @@ public class CountALSData {
                         tuple2Arrays.add(stringIntegerTuple2);
                     }
                 });
-                TrainALSModel.train(sc.parallelizePairs(tuple2Arrays), s, sc, userMap);
+                TrainALSModel.train(sc.parallelizePairs(tuple2Arrays), s, sc, user);
             }
         });
 
@@ -53,7 +53,7 @@ public class CountALSData {
             return new Tuple2<>(strings[1] + "," + strings[2], 1);
         });
         JavaPairRDD<String, Integer> counts = stringIntegerJavaPairRDD.reduceByKey((i1, i2) -> i1 + i2);
-        TrainALSModel.train(sc, counts, userMap);
+        TrainALSModel.train(sc, counts, user);
     }
 
 
