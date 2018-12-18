@@ -18,6 +18,10 @@ public class CountALSData {
         JavaSparkContext sc = JavaSparkContext.fromSparkContext(sparkSession.sparkContext());
         JavaRDD<String> lines = sc.textFile("hdfs://slaves1:9000/spark/als_*");
 
+        for(Tuple2<String, Integer> line:javaPairRDD.collect()){
+            System.out.println("* "+line._1());
+        }
+
         /**
          * group by goodsCategory`s prod rating
          */
