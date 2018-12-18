@@ -79,12 +79,13 @@ public final class GetWordCountByKafka {
                 alsModel.setGoodsCategory(goodsCategory);
                 alsModel.setTime(time);
                 alsModelList.add(alsModel);
+                broadcastList = jssc.sparkContext().broadcast(alsModelList);
                 return new Tuple2<String, Integer>(goodsCategory + "," + userId + "," + params + "," + time, 1);
             }
         }).foreachRDD(new VoidFunction2<JavaPairRDD<String, Integer>, Time>() {
             @Override
             public void call(JavaPairRDD<String, Integer> v1, Time v2) throws Exception {
-                if (v1.rdd().count() > 0 && alsModelList.size() > 0) {
+                if (v1.rdd().count() > 0 && broadcastList.getValue().size() > 0) {
                     CountALSData.read(sparkSession);
                     v1.rdd().saveAsTextFile("hdfs://slaves1:9000/spark/als_" + new Date().getTime());
                 }
