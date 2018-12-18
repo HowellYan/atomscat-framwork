@@ -1,11 +1,9 @@
 package com.atomscat.streaming;
 
-import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.SparkSession;
-import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import scala.Tuple2;
 
 import java.util.ArrayList;
@@ -17,10 +15,6 @@ import java.util.function.Consumer;
 public class CountALSData {
 
     public static void read(SparkSession sparkSession, String user) {
-        //自定义比较器
-        //SparkConf sparkConf = (new SparkConf()).setAppName("ModelTraining");
-        //JavaSparkContext sc = new JavaSparkContext(sparkConf);
-
         JavaSparkContext sc = JavaSparkContext.fromSparkContext(sparkSession.sparkContext());
         JavaRDD<String> lines = sc.textFile("hdfs://slaves1:9000/spark/als_*");
 

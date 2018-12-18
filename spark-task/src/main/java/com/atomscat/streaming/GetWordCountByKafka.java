@@ -6,21 +6,17 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
-import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.api.java.function.VoidFunction2;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.Time;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaInputDStream;
-import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka010.ConsumerStrategies;
 import org.apache.spark.streaming.kafka010.KafkaUtils;
 import org.apache.spark.streaming.kafka010.LocationStrategies;
-import scala.Function1;
 import scala.Tuple2;
-import scala.runtime.BoxedUnit;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -77,7 +73,7 @@ public final class GetWordCountByKafka {
             @Override
             public void call(JavaPairRDD<String, Integer> v1, Time v2) throws Exception {
                 if (v1.rdd().count() > 0) {
-                    v1.rdd().toJavaRDD().foreach((T)->{
+                    v1.rdd().toJavaRDD().foreach((T) -> {
                         String[] strings = T._1().split(",");
                         CountALSData.read(sparkSession, strings[1]);
                     });

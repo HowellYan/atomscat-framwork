@@ -11,9 +11,6 @@ import scala.Tuple2;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.logging.Logger;
 
 
 public class TrainALSModel {
