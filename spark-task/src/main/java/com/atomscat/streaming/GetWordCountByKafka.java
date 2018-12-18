@@ -47,24 +47,16 @@ public final class GetWordCountByKafka {
         String brokers = args[0];
         String topics = args[1];
         SparkConf sparkConf = (new SparkConf()).setAppName("JavaDirectKafkaWordCount").setMaster("spark://master:7077");
-        JavaStreamingContext jssc = new MyJavaStreamingContext(sparkConf, Durations.seconds(2L));
+        Session.jssc = new JavaStreamingContext(sparkConf, Durations.seconds(2L));
         Set<String> topicsSet = new HashSet(Arrays.asList(topics.split(",")));
         Map<String, Object> kafkaParams = new HashMap();
         kafkaParams.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         kafkaParams.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         kafkaParams.put("bootstrap.servers", brokers);
         kafkaParams.put("group.id", topics);
-        JavaInputDStream<ConsumerRecord<String, String>> messages = KafkaUtils.createDirectStream(jssc, LocationStrategies.PreferConsistent(), ConsumerStrategies.Subscribe(topicsSet, kafkaParams));
+        JavaInputDStream<ConsumerRecord<String, String>> messages = KafkaUtils.createDirectStream(Session.jssc, LocationStrategies.PreferConsistent(), ConsumerStrategies.Subscribe(topicsSet, kafkaParams));
         JavaDStream<String> lines = messages.map(ConsumerRecord::value);
 
-
-       VoidFunction voidFunction  = new VoidFunction<Tuple2<String, Integer>>() {
-            @Override
-            public void call(Tuple2<String, Integer> stringIntegerTuple2) throws Exception {
-                String[] strings = stringIntegerTuple2._1().split(",");
-                CountALSData.read(jssc, strings[1]);
-            }
-        };
 
         /**
          * clear data
@@ -91,13 +83,16 @@ public final class GetWordCountByKafka {
             @Override
             public void call(JavaPairRDD<String, Integer> v1, Time v2) throws Exception {
                 if (v1.rdd().count() > 0) {
-                    v1.rdd().toJavaRDD().foreach(voidFunction);
+                    v1.rdd().toJavaRDD().foreach((x)->{
+                        String[] strings = x._1().split(",");
+                        CountALSData.read(strings[1]);
+                    });
                     v1.rdd().saveAsTextFile("hdfs://slaves1:9000/spark/als_" + new Date().getTime());
                 }
             }
         });
-        jssc.start();
-        jssc.awaitTermination();
+        Session.jssc.start();
+        Session.jssc.awaitTermination();
     }
 
     public static String getVal(String str, Pattern p) {
