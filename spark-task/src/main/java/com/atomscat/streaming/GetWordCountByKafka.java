@@ -82,8 +82,10 @@ public final class GetWordCountByKafka {
             @Override
             public void call(JavaPairRDD<String, Integer> v1, Time v2) throws Exception {
                 if (v1.rdd().count() > 0) {
+                    ArrayList<String> userIds = new ArrayList<>();
                     v1.rdd().toJavaRDD().foreach((x)->{
                         String[] strings = x._1().split(",");
+                        userIds.add(strings[1]);
                     });
                     //CountALSData.read(jssc.sparkContext(), strings[1]);
                     v1.rdd().saveAsTextFile("hdfs://slaves1:9000/spark/als_" + new Date().getTime());
