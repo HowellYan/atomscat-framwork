@@ -89,7 +89,7 @@ public class TrainALSModel {
             }
         });
 
-        bestModel.save(sc.sc(), "hdfs://slaves1:9000/model/goodsCategory_" + key + "_" + time);
+        //bestModel.save(sc.sc(), "hdfs://slaves1:9000/model/goodsCategory_" + key + "_" + time);
 
         // MatrixFactorizationModel bestModel2 = MatrixFactorizationModel.load(sc.sc(), "hdfs://slaves1:9000/model/goodsCategory_" + key + "_*");
         //提取推荐的用户列表

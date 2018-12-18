@@ -24,8 +24,10 @@ public class SendDataToKafka {
         kafkaParams.put("group.id", topics);
 
         KafkaProducer kafkaProducer =  new KafkaProducer<String,String>(kafkaParams);
+        ProducerRecord record = new ProducerRecord<String, String>(topics, user);
+        kafkaProducer.send(record);
         for (Rating rating : ratingsList) {
-            ProducerRecord record = new ProducerRecord<String, String>(topics, String.valueOf(rating.user())+","+String.valueOf(rating.product()));
+            record = new ProducerRecord<String, String>(topics, String.valueOf(rating.user())+","+String.valueOf(rating.product()));
             kafkaProducer.send(record);
         }
     }
