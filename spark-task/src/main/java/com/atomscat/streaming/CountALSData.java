@@ -46,7 +46,7 @@ public class CountALSData {
                 javaPairRDD.collect().forEach(new Consumer<Tuple2<String, Integer>>() {
                     @Override
                     public void accept(Tuple2<String, Integer> stringIntegerTuple2) {
-                        TrainALSModel.train(sc.parallelizePairs(tuple2Arrays), goodsCategory, stringIntegerTuple2._1().split(",")[1]);
+                        TrainALSModel.train(sc.parallelizePairs(tuple2Arrays), stringIntegerTuple2._1().split(",")[1], goodsCategory);
                     }
                 });
             }
