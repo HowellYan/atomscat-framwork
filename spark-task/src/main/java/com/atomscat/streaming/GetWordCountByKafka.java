@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 public final class GetWordCountByKafka {
     private static final Pattern SPACE = Pattern.compile(" ");
     private static final Pattern UserId = Pattern.compile("\\s?UserId: [a-zA-Z0-9._-]+\\s?");
-    private static final Pattern Params = Pattern.compile("id\\\\\":\\\\\"[a-zA-Z0-9._-]+");
+    private static final Pattern ProductId = Pattern.compile("id\\\\\":\\\\\"[a-zA-Z0-9._-]+");
     private static final Pattern GoodsCategory = Pattern.compile("goodsCategory\\\\\":\\\\\"[a-zA-Z0-9._-]+");
 
 
@@ -64,11 +64,11 @@ public final class GetWordCountByKafka {
             @Override
             public Tuple2<String, Integer> call(String s) throws Exception {
                 String userId = getVal(s, UserId).replace("UserId: ", "");
-                String params = getVal(s, Params).replace("id\\\":\\\"", "");
+                String productId = getVal(s, ProductId).replace("id\\\":\\\"", "");
                 String goodsCategory = getVal(s, GoodsCategory).replace("goodsCategory\\\":\\\"", "");
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
                 String time = simpleDateFormat.format(new Date());
-                return new Tuple2<String, Integer>(goodsCategory + "," + userId + "," + params + "," + time, 1);
+                return new Tuple2<String, Integer>(goodsCategory + "," + userId + "," + productId + "," + time, 1);
             }
         }).foreachRDD(new VoidFunction2<JavaPairRDD<String, Integer>, Time>() {
             @Override

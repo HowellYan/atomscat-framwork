@@ -33,25 +33,36 @@ public class CountALSData {
             return new Tuple2<String, Tuple2<String, Integer>>(strings[0], new Tuple2(strings[1] + "," + strings[2], s1._2()));
         }).groupByKey().collectAsMap();
 
-        stringIterableJavaPairRDD.forEach(new BiConsumer<String, Iterable<Tuple2<String, Integer>>>() {
+//        stringIterableJavaPairRDD.forEach(new BiConsumer<String, Iterable<Tuple2<String, Integer>>>() {
+//            @Override
+//            public void accept(String goodsCategory, Iterable<Tuple2<String, Integer>> tuple2s) {
+//                List<Tuple2<String, Integer>> tuple2Arrays = new ArrayList<>();
+//                tuple2s.forEach(new Consumer<Tuple2<String, Integer>>() {
+//                    @Override
+//                    public void accept(Tuple2<String, Integer> stringIntegerTuple2) {
+//                        tuple2Arrays.add(stringIntegerTuple2);
+//                    }
+//                });
+//
+//            }
+//        });
+        javaPairRDD.collect().forEach(new Consumer<Tuple2<String, Integer>>() {
             @Override
-            public void accept(String goodsCategory, Iterable<Tuple2<String, Integer>> tuple2s) {
+            public void accept(Tuple2<String, Integer> stringIntegerTuple2) {
+                String[] strings = stringIntegerTuple2._1().replaceAll("\\(", "").replaceAll("\\)", "").split(",");
+                String user = strings[1];
+                String goodsCategory = strings[0];
+                Iterable<Tuple2<String, Integer>> iterable = stringIterableJavaPairRDD.get("goodsCategory");
                 List<Tuple2<String, Integer>> tuple2Arrays = new ArrayList<>();
-                tuple2s.forEach(new Consumer<Tuple2<String, Integer>>() {
+                iterable.forEach(new Consumer<Tuple2<String, Integer>>() {
                     @Override
                     public void accept(Tuple2<String, Integer> stringIntegerTuple2) {
                         tuple2Arrays.add(stringIntegerTuple2);
                     }
                 });
-                javaPairRDD.collect().forEach(new Consumer<Tuple2<String, Integer>>() {
-                    @Override
-                    public void accept(Tuple2<String, Integer> stringIntegerTuple2) {
-                        TrainALSModel.train(sc.parallelizePairs(tuple2Arrays), stringIntegerTuple2._1().split(",")[1], goodsCategory);
-                    }
-                });
+                TrainALSModel.train(sc.parallelizePairs(tuple2Arrays), user, goodsCategory);
             }
         });
-
 
         /**
          * all prod rating
