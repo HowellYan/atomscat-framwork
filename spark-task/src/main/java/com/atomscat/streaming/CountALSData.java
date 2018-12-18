@@ -3,7 +3,6 @@ package com.atomscat.streaming;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.sql.SparkSession;
 import scala.Tuple2;
 
@@ -14,10 +13,14 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class CountALSData {
-
+// , String user
     public static void read(SparkSession sparkSession, JavaRDD<Tuple2<String, Integer>> javaPairRDD) {
         JavaSparkContext sc = JavaSparkContext.fromSparkContext(sparkSession.sparkContext());
         JavaRDD<String> lines = sc.textFile("hdfs://slaves1:9000/spark/als_*");
+
+
+
+
         String user = "2096876";
         /**
          * group by goodsCategory`s prod rating
@@ -47,17 +50,15 @@ public class CountALSData {
         /**
          * all prod rating
          */
-
-        javaPairRDD.foreach(new VoidFunction<Tuple2<String, Integer>>() {
+        JavaPairRDD<String, Integer> stringIntegerJavaPairRDD = lines.mapToPair((s) -> {
+            String[] strings = s.split(",");
+            return new Tuple2<>(strings[1] + "," + strings[2], 1);
+        });
+        JavaPairRDD<String, Integer> counts = stringIntegerJavaPairRDD.reduceByKey((i1, i2) -> i1 + i2);
+        javaPairRDD.collect().forEach(new Consumer<Tuple2<String, Integer>>() {
             @Override
-            public void call(Tuple2<String, Integer> stringIntegerTuple2) throws Exception {
-                String[] userList = stringIntegerTuple2._1().split(",");
-                JavaPairRDD<String, Integer> stringIntegerJavaPairRDD = lines.mapToPair((s) -> {
-                    String[] strings = s.split(",");
-                    return new Tuple2<>(strings[1] + "," + strings[2], 1);
-                });
-                JavaPairRDD<String, Integer> counts = stringIntegerJavaPairRDD.reduceByKey((i1, i2) -> i1 + i2);
-                TrainALSModel.train(counts, userList[1]);
+            public void accept(Tuple2<String, Integer> stringIntegerTuple2) {
+                TrainALSModel.train(counts, stringIntegerTuple2._1().split(",")[1]);
             }
         });
 
