@@ -81,7 +81,7 @@ public final class GetWordCountByKafka {
                 if (v1.rdd().count() > 0) {
                     v1.rdd().saveAsTextFile("hdfs://slaves1:9000/spark/als_" + new Date().getTime());
 
-                    v1.mapToPair(new PairFunction<Tuple2<String, Integer>, String, Integer>() {
+                    v1.rdd().toJavaRDD().mapToPair(new PairFunction<Tuple2<String, Integer>, String, Integer>() {
                         @Override
                         public Tuple2<String, Integer> call(Tuple2<String, Integer> stringIntegerTuple2) throws Exception {
                             String[] strings = stringIntegerTuple2._1().split(",");
