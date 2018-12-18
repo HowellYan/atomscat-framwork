@@ -62,7 +62,7 @@ public final class GetWordCountByKafka {
             @Override
             public void call(Tuple2<String, Integer> stringIntegerTuple2) throws Exception {
                 String[] strings = stringIntegerTuple2._1().split(",");
-                CountALSData.read(jssc.sparkContext(), strings[1]);
+                CountALSData.read(jssc, strings[1]);
             }
         };
 

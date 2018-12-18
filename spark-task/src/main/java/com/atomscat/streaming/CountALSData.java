@@ -3,6 +3,7 @@ package com.atomscat.streaming;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import scala.Tuple2;
 
 import java.util.ArrayList;
@@ -13,12 +14,12 @@ import java.util.function.Consumer;
 
 public class CountALSData {
 
-    public static void read(JavaSparkContext sc, String user) {
+    public static void read(JavaStreamingContext sc, String user) {
         //自定义比较器
         //SparkConf sparkConf = (new SparkConf()).setAppName("ModelTraining");
         //JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
-        JavaRDD<String> lines = sc.textFile("hdfs://slaves1:9000/spark/als_*");
+        JavaRDD<String> lines = sc.sparkContext().textFile("hdfs://slaves1:9000/spark/als_*");
 
         /**
          * group by goodsCategory`s prod rating
@@ -41,7 +42,7 @@ public class CountALSData {
                         tuple2Arrays.add(stringIntegerTuple2);
                     }
                 });
-                TrainALSModel.train(sc.parallelizePairs(tuple2Arrays), s, sc, user);
+                TrainALSModel.train(sc.sparkContext().parallelizePairs(tuple2Arrays), s, sc.sparkContext(), user);
             }
         });
 
@@ -53,7 +54,7 @@ public class CountALSData {
             return new Tuple2<>(strings[1] + "," + strings[2], 1);
         });
         JavaPairRDD<String, Integer> counts = stringIntegerJavaPairRDD.reduceByKey((i1, i2) -> i1 + i2);
-        TrainALSModel.train(sc, counts, user);
+        TrainALSModel.train(sc.sparkContext(), counts, user);
     }
 
 
