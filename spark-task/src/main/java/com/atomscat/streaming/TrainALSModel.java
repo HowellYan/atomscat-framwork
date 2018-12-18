@@ -1,6 +1,5 @@
 package com.atomscat.streaming;
 
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -12,17 +11,13 @@ import scala.Tuple2;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 
 public class TrainALSModel {
-    public static void main(String[] args) {
-        String path = "hdfs://slaves1:9000/spark/count_als_" + new Date().getTime();
-        SparkConf sparkConf = (new SparkConf()).setAppName("ModelTraining");
-        JavaSparkContext sc = new JavaSparkContext(sparkConf);
-        //train(sc,path);
-    }
 
-    public static void train(JavaSparkContext sc, JavaPairRDD<String, Integer> rdd) {
+    public static void train(JavaSparkContext sc, JavaPairRDD<String, Integer> rdd, Map<String, String> userMap) {
         JavaRDD<Rating> ratings = rdd.map(new Function<Tuple2<String, Integer>, Rating>() {
             @Override
             public Rating call(Tuple2<String, Integer> v1) throws Exception {
@@ -44,6 +39,14 @@ public class TrainALSModel {
         MatrixFactorizationModel bestModel = ALS.train(ratings.rdd(), bestRank, bestNumIter, bestLamba);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSSZ");
         String time = simpleDateFormat.format(new Date());
+        userMap.forEach(new BiConsumer<String, String>() {
+            @Override
+            public void accept(String s, String s2) {
+                System.out.println(s+","+s2);
+            }
+        });
+
+
         bestModel.save(sc.sc(), "hdfs://slaves1:9000/model/all_" + time);
         //提取推荐的用户列表
 //        /**
@@ -56,7 +59,7 @@ public class TrainALSModel {
     }
 
 
-    public static void train(JavaPairRDD<String, Integer> rdd, String key, JavaSparkContext sc) {
+    public static void train(JavaPairRDD<String, Integer> rdd, String key, JavaSparkContext sc, Map<String, String> userMap) {
         JavaRDD<Rating> ratings = rdd.map(new Function<Tuple2<String, Integer>, Rating>() {
             @Override
             public Rating call(Tuple2<String, Integer> v1) throws Exception {
@@ -78,9 +81,16 @@ public class TrainALSModel {
         MatrixFactorizationModel bestModel = ALS.train(ratings.rdd(), bestRank, bestNumIter, bestLamba);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSSZ");
         String time = simpleDateFormat.format(new Date());
+        userMap.forEach(new BiConsumer<String, String>() {
+            @Override
+            public void accept(String s, String s2) {
+                System.out.println(s+","+s2);
+            }
+        });
+
         bestModel.save(sc.sc(), "hdfs://slaves1:9000/model/goodsCategory_" + key + "_" + time);
 
-        MatrixFactorizationModel bestModel2 = MatrixFactorizationModel.load(sc.sc(), "hdfs://slaves1:9000/model/goodsCategory_" + key + "_*");
+        // MatrixFactorizationModel bestModel2 = MatrixFactorizationModel.load(sc.sc(), "hdfs://slaves1:9000/model/goodsCategory_" + key + "_*");
         //提取推荐的用户列表
 //        /**
 //         *  @param user the user to recommend products to

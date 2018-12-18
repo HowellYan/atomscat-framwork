@@ -1,6 +1,5 @@
 package com.atomscat.streaming;
 
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -13,13 +12,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class CountALSData {
-    public static void main(String[] args) {
-        SparkConf sparkConf = (new SparkConf()).setAppName("ModelTraining");
-        JavaSparkContext sc = new JavaSparkContext(sparkConf);
-        read(sc);
-    }
 
-    public static void read(JavaSparkContext sc) {
+    public static void read(JavaSparkContext sc, Map<String, String> userMap) {
         //自定义比较器
         //SparkConf sparkConf = (new SparkConf()).setAppName("ModelTraining");
         //JavaSparkContext sc = new JavaSparkContext(sparkConf);
@@ -47,7 +41,7 @@ public class CountALSData {
                         tuple2Arrays.add(stringIntegerTuple2);
                     }
                 });
-                TrainALSModel.train(sc.parallelizePairs(tuple2Arrays), s, sc);
+                TrainALSModel.train(sc.parallelizePairs(tuple2Arrays), s, sc, userMap);
             }
         });
 
@@ -59,7 +53,7 @@ public class CountALSData {
             return new Tuple2<>(strings[1] + "," + strings[2], 1);
         });
         JavaPairRDD<String, Integer> counts = stringIntegerJavaPairRDD.reduceByKey((i1, i2) -> i1 + i2);
-        TrainALSModel.train(sc, counts);
+        TrainALSModel.train(sc, counts, userMap);
     }
 
 

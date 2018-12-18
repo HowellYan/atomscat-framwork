@@ -29,6 +29,8 @@ public final class GetWordCountByKafka {
     private static final Pattern Params = Pattern.compile("id\\\\\":\\\\\"[a-zA-Z0-9._-]+");
     private static final Pattern GoodsCategory = Pattern.compile("goodsCategory\\\\\":\\\\\"[a-zA-Z0-9._-]+");
 
+    private static Map<String,String> userMap = new HashMap<>();
+
     public GetWordCountByKafka() {
     }
 
@@ -57,9 +59,10 @@ public final class GetWordCountByKafka {
         /**
          * clear data
          */
-        JavaPairDStream<String, Integer> wordCounts = lines.filter(new Function<String, Boolean>() {
+        lines.filter(new Function<String, Boolean>() {
             @Override
             public Boolean call(String v1) throws Exception {
+                userMap = new HashMap<>();
                 if (v1.indexOf("/api/goods/detail") > 0 && v1.indexOf("UserId: null") < 0) {
                     return true;
                 }
@@ -73,17 +76,15 @@ public final class GetWordCountByKafka {
                 String goodsCategory = getVal(s, GoodsCategory).replace("goodsCategory\\\":\\\"", "");
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
                 String time = simpleDateFormat.format(new Date());
+                userMap.put(userId, "");
                 return new Tuple2<String, Integer>(goodsCategory + "," + userId + "," + params + "," + time, 1);
             }
-        });
-        lines.print();
-        wordCounts.print();
-        wordCounts.foreachRDD(new VoidFunction2<JavaPairRDD<String, Integer>, Time>() {
+        }).foreachRDD(new VoidFunction2<JavaPairRDD<String, Integer>, Time>() {
             @Override
             public void call(JavaPairRDD<String, Integer> v1, Time v2) throws Exception {
                 if (v1.rdd().count() > 0) {
                     v1.rdd().saveAsTextFile("hdfs://slaves1:9000/spark/als_" + new Date().getTime());
-                    CountALSData.read(jssc.sparkContext());
+                    CountALSData.read(jssc.sparkContext(), userMap);
                 }
             }
         });
