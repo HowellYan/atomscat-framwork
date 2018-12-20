@@ -69,6 +69,7 @@ public class CountALSData {
                 }
             });
         } catch (Exception e) {
+            System.out.println(e.getMessage().toString());
         }
 
     }

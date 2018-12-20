@@ -34,53 +34,57 @@ public final class GetWordCountByKafka {
     }
 
     public static void main(String[] args) throws Exception {
-        String brokers = "192.168.31.166:9092";
-        String topics = "spark-log";
-        SparkConf sparkConf = (new SparkConf()).setAppName("JavaDirectKafkaWordCount").setMaster("spark://master:7077");
-        JavaStreamingContext jssc = new JavaStreamingContext(sparkConf, Durations.seconds(2L));
-        Set<String> topicsSet = new HashSet(Arrays.asList(topics.split(",")));
-        Map<String, Object> kafkaParams = new HashMap();
-        kafkaParams.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        kafkaParams.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        kafkaParams.put("bootstrap.servers", brokers);
-        kafkaParams.put("group.id", topics);
-        JavaInputDStream<ConsumerRecord<String, String>> messages = KafkaUtils.createDirectStream(jssc, LocationStrategies.PreferConsistent(), ConsumerStrategies.Subscribe(topicsSet, kafkaParams));
-        JavaDStream<String> lines = messages.map(ConsumerRecord::value);
+        try {
+            String brokers = "192.168.31.166:9092";
+            String topics = "spark-log";
+            SparkConf sparkConf = (new SparkConf()).setAppName("JavaDirectKafkaWordCount").setMaster("spark://master:7077");
+            JavaStreamingContext jssc = new JavaStreamingContext(sparkConf, Durations.seconds(2L));
+            Set<String> topicsSet = new HashSet(Arrays.asList(topics.split(",")));
+            Map<String, Object> kafkaParams = new HashMap();
+            kafkaParams.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+            kafkaParams.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+            kafkaParams.put("bootstrap.servers", brokers);
+            kafkaParams.put("group.id", topics);
+            JavaInputDStream<ConsumerRecord<String, String>> messages = KafkaUtils.createDirectStream(jssc, LocationStrategies.PreferConsistent(), ConsumerStrategies.Subscribe(topicsSet, kafkaParams));
+            JavaDStream<String> lines = messages.map(ConsumerRecord::value);
 
-        SparkSession sparkSession = SparkSession.builder().sparkContext(jssc.ssc().sc()).getOrCreate();
+            SparkSession sparkSession = SparkSession.builder().sparkContext(jssc.ssc().sc()).getOrCreate();
 
-        /**
-         * clear data
-         */
-        lines.filter(new Function<String, Boolean>() {
-            @Override
-            public Boolean call(String v1) throws Exception {
-                if (v1.indexOf("/api/goods/detail") > 0 && v1.indexOf("UserId: null") < 0) {
-                    return true;
+            /**
+             * clear data
+             */
+            lines.filter(new Function<String, Boolean>() {
+                @Override
+                public Boolean call(String v1) throws Exception {
+                    if (v1.indexOf("/api/goods/detail") > 0 && v1.indexOf("UserId: null") < 0) {
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        }).mapToPair(new PairFunction<String, String, Integer>() {
-            @Override
-            public Tuple2<String, Integer> call(String s) throws Exception {
-                String userId = getVal(s, UserId).replace("UserId: ", "");
-                String productId = getVal(s, ProductId).replace("id\\\":\\\"", "");
-                String goodsCategory = getVal(s, GoodsCategory).replace("goodsCategory\\\":\\\"", "");
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
-                String time = simpleDateFormat.format(new Date());
-                return new Tuple2<String, Integer>(goodsCategory + "," + userId + "," + productId + "," + time, 1);
-            }
-        }).foreachRDD(new VoidFunction2<JavaPairRDD<String, Integer>, Time>() {
-            @Override
-            public void call(JavaPairRDD<String, Integer> v1, Time v2) throws Exception {
-                if (v1.rdd().count() > 0) {
-                    CountALSData.read(sparkSession, v1.rdd().toJavaRDD());
-                    v1.rdd().saveAsTextFile("hdfs://slaves1:9000/spark/als_" + new Date().getTime());
+            }).mapToPair(new PairFunction<String, String, Integer>() {
+                @Override
+                public Tuple2<String, Integer> call(String s) throws Exception {
+                    String userId = getVal(s, UserId).replace("UserId: ", "");
+                    String productId = getVal(s, ProductId).replace("id\\\":\\\"", "");
+                    String goodsCategory = getVal(s, GoodsCategory).replace("goodsCategory\\\":\\\"", "");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+                    String time = simpleDateFormat.format(new Date());
+                    return new Tuple2<String, Integer>(goodsCategory + "," + userId + "," + productId + "," + time, 1);
                 }
-            }
-        });
-        jssc.start();
-        jssc.awaitTermination();
+            }).foreachRDD(new VoidFunction2<JavaPairRDD<String, Integer>, Time>() {
+                @Override
+                public void call(JavaPairRDD<String, Integer> v1, Time v2) throws Exception {
+                    if (v1.rdd().count() > 0) {
+                        CountALSData.read(sparkSession, v1.rdd().toJavaRDD());
+                        v1.rdd().saveAsTextFile("hdfs://slaves1:9000/spark/als_" + new Date().getTime());
+                    }
+                }
+            });
+            jssc.start();
+            jssc.awaitTermination();
+        } catch (Exception e) {
+            System.out.println(e.getMessage().toString());
+        }
     }
 
     public static String getVal(String str, Pattern p) {
