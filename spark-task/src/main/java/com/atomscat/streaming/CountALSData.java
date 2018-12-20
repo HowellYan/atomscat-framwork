@@ -14,38 +14,25 @@ import java.util.function.Consumer;
 public class CountALSData {
 
     public static void read(SparkSession sparkSession, JavaRDD<Tuple2<String, Integer>> javaPairRDD) {
-        JavaSparkContext sc = JavaSparkContext.fromSparkContext(sparkSession.sparkContext());
-        JavaRDD<String> lines = sc.textFile("hdfs://slaves1:9000/spark/als_*");
-
-        for (Tuple2<String, Integer> line : javaPairRDD.collect()) {
-            System.out.println("* " + line._1());
-        }
-
-        /**
-         * group by goodsCategory`s prod rating
-         */
-        Map<String, Iterable<Tuple2<String, Integer>>> stringIterableJavaPairRDD = lines.mapToPair((s) -> {
-            String[] strings = s.replaceAll("\\(", "").replaceAll("\\)", "").split(",");
-            return new Tuple2<String, Integer>(strings[0] + "," + strings[1] + "," + strings[2], 1);
-        }).reduceByKey((i1, i2) -> i1 + i2).mapToPair((s1) -> {
-            String[] strings = s1._1().split(",");
-            return new Tuple2<String, Tuple2<String, Integer>>(strings[0], new Tuple2(strings[1] + "," + strings[2], s1._2()));
-        }).groupByKey().collectAsMap();
-
-//        stringIterableJavaPairRDD.forEach(new BiConsumer<String, Iterable<Tuple2<String, Integer>>>() {
-//            @Override
-//            public void accept(String goodsCategory, Iterable<Tuple2<String, Integer>> tuple2s) {
-//                List<Tuple2<String, Integer>> tuple2Arrays = new ArrayList<>();
-//                tuple2s.forEach(new Consumer<Tuple2<String, Integer>>() {
-//                    @Override
-//                    public void accept(Tuple2<String, Integer> stringIntegerTuple2) {
-//                        tuple2Arrays.add(stringIntegerTuple2);
-//                    }
-//                });
-//
-//            }
-//        });
         try {
+            JavaSparkContext sc = JavaSparkContext.fromSparkContext(sparkSession.sparkContext());
+            JavaRDD<String> lines = sc.textFile("hdfs://slaves1:9000/spark/als_*");
+
+            for (Tuple2<String, Integer> line : javaPairRDD.collect()) {
+                System.out.println("* " + line._1());
+            }
+
+            /**
+             * group by goodsCategory`s prod rating
+             */
+            Map<String, Iterable<Tuple2<String, Integer>>> stringIterableJavaPairRDD = lines.mapToPair((s) -> {
+                String[] strings = s.replaceAll("\\(", "").replaceAll("\\)", "").split(",");
+                return new Tuple2<String, Integer>(strings[0] + "," + strings[1] + "," + strings[2], 1);
+            }).reduceByKey((i1, i2) -> i1 + i2).mapToPair((s1) -> {
+                String[] strings = s1._1().split(",");
+                return new Tuple2<String, Tuple2<String, Integer>>(strings[0], new Tuple2(strings[1] + "," + strings[2], s1._2()));
+            }).groupByKey().collectAsMap();
+
             javaPairRDD.collect().forEach(new Consumer<Tuple2<String, Integer>>() {
                 @Override
                 public void accept(Tuple2<String, Integer> stringIntegerTuple2) {
@@ -82,7 +69,6 @@ public class CountALSData {
                 }
             });
         } catch (Exception e) {
-            System.out.println(e.getMessage().toString());
         }
 
     }
