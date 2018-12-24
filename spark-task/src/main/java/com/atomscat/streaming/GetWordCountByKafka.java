@@ -37,7 +37,7 @@ public final class GetWordCountByKafka {
         try {
             String brokers = "192.168.31.166:9092";
             String topics = "spark-log";
-            SparkConf sparkConf = (new SparkConf()).setAppName("JavaDirectKafkaWordCount").setMaster("spark://master:7077");
+            SparkConf sparkConf = (new SparkConf()).setAppName("JavaDirectKafkaWordCount").setMaster("local[*]");
             JavaStreamingContext jssc = new JavaStreamingContext(sparkConf, Durations.seconds(2L));
             Set<String> topicsSet = new HashSet(Arrays.asList(topics.split(",")));
             Map<String, Object> kafkaParams = new HashMap();
@@ -46,10 +46,12 @@ public final class GetWordCountByKafka {
             kafkaParams.put("bootstrap.servers", brokers);
             kafkaParams.put("group.id", topics);
             JavaInputDStream<ConsumerRecord<String, String>> messages = KafkaUtils.createDirectStream(jssc, LocationStrategies.PreferConsistent(), ConsumerStrategies.Subscribe(topicsSet, kafkaParams));
+
             JavaDStream<String> lines = messages.map(ConsumerRecord::value);
 
             SparkSession sparkSession = SparkSession.builder().sparkContext(jssc.ssc().sc()).getOrCreate();
 
+            lines.print();
             /**
              * clear data
              */

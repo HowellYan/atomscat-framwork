@@ -30,3 +30,31 @@ cp /tools/spark-task-1.0-SNAPSHOT-dist/lib/kafka-clients-2.0.1.jar ./
 
 
 ./bin/kafka-console-consumer.sh --bootstrap-server 192.168.31.166:9092 --topic spark-als --from-beginning
+
+
+
+
+
+
+```
+#!/bin/bash
+#
+
+master=`ps -ef | grep SparkSubmit | grep jar | awk '{print $2}'`
+echo $master
+if [ "$master" =  "" ]; then
+        echo "Spark Master is restart!"
+        exec spark-submit --master spark://master:7077 --class com.atomscat.streaming.GetWordCountByKafka ./target/spark-task-1.0-SNAPSHOT.jar  >./applog.log&
+else
+        echo "Spark Master is alive!"
+fi
+
+```
+
+```
+
+crontab -e
+
+*/1 * * * * /tools/monitorSparkSlave.sh
+
+```
