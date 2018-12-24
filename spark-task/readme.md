@@ -43,10 +43,10 @@ cp /tools/spark-task-1.0-SNAPSHOT-dist/lib/kafka-clients-2.0.1.jar ./
 master=`ps -ef | grep SparkSubmit | grep jar | awk '{print $2}'`
 echo $master
 if [ "$master" =  "" ]; then
-        echo "Spark Master is restart!"
+        echo "SparkSubmit is restart!"
         exec spark-submit --master spark://master:7077 --class com.atomscat.streaming.GetWordCountByKafka ./target/spark-task-1.0-SNAPSHOT.jar  >./applog.log&
 else
-        echo "Spark Master is alive!"
+        echo "SparkSubmit is alive!"
 fi
 
 ```
@@ -55,6 +55,6 @@ fi
 
 crontab -e
 
-*/1 * * * * /tools/monitorSparkSlave.sh
+*/1 * * * * /tools/monitorSparkSubmit.sh
 
 ```
