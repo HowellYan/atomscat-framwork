@@ -37,7 +37,7 @@ public final class GetWordCountByKafka {
         try {
             String brokers = "192.168.31.166:9092";
             String topics = "spark-log";
-            SparkConf sparkConf = (new SparkConf()).setAppName("JavaDirectKafkaWordCount").setMaster("local[*]");
+            SparkConf sparkConf = (new SparkConf()).setAppName("JavaDirectKafkaWordCount").setMaster("spark://master:7077");
             JavaStreamingContext jssc = new JavaStreamingContext(sparkConf, Durations.seconds(2L));
             Set<String> topicsSet = new HashSet(Arrays.asList(topics.split(",")));
             Map<String, Object> kafkaParams = new HashMap();
@@ -69,7 +69,7 @@ public final class GetWordCountByKafka {
                     String userId = getVal(s, UserId).replace("UserId: ", "");
                     String productId = getVal(s, ProductId).replace("id\\\":\\\"", "");
                     String goodsCategory = getVal(s, GoodsCategory).replace("goodsCategory\\\":\\\"", "");
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
                     String time = simpleDateFormat.format(new Date());
                     return new Tuple2<String, Integer>(goodsCategory + "," + userId + "," + productId + "," + time, 1);
                 }
