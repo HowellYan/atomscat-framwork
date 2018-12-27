@@ -19,6 +19,7 @@
         <module>ratpack-spring-boot</module>
         <module>spark-spring-boot</module>
         <module>spark-task</module>
+        <module>spring-boot-mvc</module>
     </modules>
 
 
