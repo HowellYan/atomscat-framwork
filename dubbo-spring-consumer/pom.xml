@@ -9,12 +9,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>dubbo-spring-provider</artifactId>
+    <artifactId>dubbo-spring-consumer</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>dubbo-spring-provider-web</module>
-        <module>dubbo-spring-provider-api</module>
+        <module>dubbo-spring-consumer-api</module>
+        <module>dubbo-spring-consumer-web</module>
     </modules>
+
 
     <properties>
         <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
@@ -76,4 +77,5 @@
 
         </plugins>
     </build>
+
 </project>

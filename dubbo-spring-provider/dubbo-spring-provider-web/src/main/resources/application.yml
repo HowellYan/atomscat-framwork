@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: dubbo-spring-provider
+  profiles:
+    active: dev
+
+
+dubbo:
+  scan:
+    base-packages: com.atomscat
+  registry:
+    address: zookeeper://192.168.31.165:2181
+  protocol:
+    port: 28038
+
+#内嵌服务器端口
+server:
+  port: 8080
