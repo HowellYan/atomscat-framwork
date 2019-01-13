@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DemoServiceImpl implements DemoService {
@@ -65,6 +66,20 @@ public class DemoServiceImpl implements DemoService {
         });
         sayHelloResponse.setMsg(String.format("[%s] : Hello, %s", serviceName, sayHelloRequestCommonRequest.getRequest().getName()) + "listCommonRequest: "+ bookBeanList.size());
         sayHelloResponseCommonResponse.setResponse(sayHelloResponse);
+        return sayHelloResponseCommonResponse;
+    }
+
+    @Override
+    public CommonResponse<SayHelloResponse> getBook(CommonRequest<Map<String, BookBean>> sayHelloRequestCommonRequest) {
+        logger.info(JSON.toJSONString(sayHelloRequestCommonRequest.getRequest()));
+        sayHelloRequestCommonRequest.getRequest().forEach((key, values)->{
+            System.out.println(key);
+            System.out.println(values.getBookId());
+            System.out.println(values.getBookName());
+        });
+        CommonResponse<SayHelloResponse> sayHelloResponseCommonResponse = new  CommonResponse<SayHelloResponse>();
+        sayHelloResponseCommonResponse.setCode("000000");
+        sayHelloResponseCommonResponse.setContent("ok2");
         return sayHelloResponseCommonResponse;
     }
 }
