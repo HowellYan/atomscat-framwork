@@ -42,7 +42,28 @@ public class DemoServiceImpl implements DemoService {
         sayHelloResponseCommonResponse.setContent("ok");
         SayHelloResponse sayHelloResponse = new SayHelloResponse();
         List<BookBean> bookBeanList = sayHelloRequestCommonRequest.getRequest().getBookBeanList();
+        bookBeanList.forEach(x->{
+            System.out.println(x.getBookName());
+        });
         sayHelloResponse.setMsg(String.format("[%s] : Hello, %s", serviceName, sayHelloRequestCommonRequest.getRequest().getName()) + "bookBeanList: "+ bookBeanList.size());
+        sayHelloResponseCommonResponse.setResponse(sayHelloResponse);
+        return sayHelloResponseCommonResponse;
+    }
+
+    @Override
+    public CommonResponse<SayHelloResponse> sayHello(CommonRequest<SayHelloRequest> sayHelloRequestCommonRequest, CommonRequest<List<BookBean>> listCommonRequest) {
+        logger.info(JSON.toJSONString(sayHelloRequestCommonRequest));
+        logger.info(JSON.toJSONString(listCommonRequest));
+        CommonResponse<SayHelloResponse> sayHelloResponseCommonResponse = new  CommonResponse<SayHelloResponse>();
+        sayHelloResponseCommonResponse.setCode("000000");
+        sayHelloResponseCommonResponse.setContent("ok1");
+        SayHelloResponse sayHelloResponse = new SayHelloResponse();
+        List<BookBean> bookBeanList = listCommonRequest.getRequest();
+        bookBeanList.forEach(x->{
+            System.out.println(x.getBookId());
+            System.out.println(x.getBookName());
+        });
+        sayHelloResponse.setMsg(String.format("[%s] : Hello, %s", serviceName, sayHelloRequestCommonRequest.getRequest().getName()) + "listCommonRequest: "+ bookBeanList.size());
         sayHelloResponseCommonResponse.setResponse(sayHelloResponse);
         return sayHelloResponseCommonResponse;
     }
