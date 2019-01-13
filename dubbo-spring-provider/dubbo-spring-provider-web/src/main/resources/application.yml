@@ -9,7 +9,7 @@ dubbo:
   scan:
     base-packages: com.atomscat
   registry:
-    address: zookeeper://192.168.31.165:2181
+    address: zookeeper://192.168.59.4:2181
   protocol:
     port: 28038
 
