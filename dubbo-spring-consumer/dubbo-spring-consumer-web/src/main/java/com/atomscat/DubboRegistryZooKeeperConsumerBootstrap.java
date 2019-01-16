@@ -41,7 +41,7 @@ public class DubboRegistryZooKeeperConsumerBootstrap {
     @Bean
     public ApplicationRunner runner() {
         return args -> {
-            logger.info(demoService.sayHello("mercyblitz"));
+            logger.info(demoService.sayHello("mercyblitz").getMsg());
         };
     }
 
