@@ -30,11 +30,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache</groupId>
-            <artifactId>dubbo-rpc-rest</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.atomscat</groupId>
             <artifactId>dubbo-spring-provider-api</artifactId>
             <version>1.0-SNAPSHOT</version>

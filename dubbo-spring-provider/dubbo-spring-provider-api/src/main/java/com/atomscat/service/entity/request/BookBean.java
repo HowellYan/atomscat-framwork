@@ -1,8 +1,13 @@
 package com.atomscat.service.entity.request;
 
 import com.atomscat.service.entity.request.base.BaseRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+@ApiModel(description = "BookBean---传递参数")
 public class BookBean extends BaseRequest {
+
+    @ApiModelProperty("参数:bookId")
     String bookId;
     String bookName;
     String bookPageSize;

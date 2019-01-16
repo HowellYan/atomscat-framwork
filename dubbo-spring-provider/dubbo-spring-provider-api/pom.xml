@@ -10,6 +10,15 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>dubbo-spring-provider-api</artifactId>
 
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/io.swagger/swagger-annotations -->
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+        </dependency>
+
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
