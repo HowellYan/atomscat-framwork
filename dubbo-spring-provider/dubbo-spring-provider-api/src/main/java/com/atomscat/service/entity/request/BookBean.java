@@ -9,7 +9,11 @@ public class BookBean extends BaseRequest {
 
     @ApiModelProperty("参数:bookId")
     String bookId;
+
+    @ApiModelProperty("参数:bookName")
     String bookName;
+
+    @ApiModelProperty("参数:bookPageSize")
     String bookPageSize;
 
     public String getBookId() {

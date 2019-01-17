@@ -19,13 +19,13 @@ import java.util.Map;
 public interface DemoService {
     @POST
     @Path("sayHello1")
-    @ApiOperation(value = "Find pet by ID")
+    @ApiOperation(value = "测试sayHello1接口")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"), @ApiResponse(code = 404, message = "Pet not found")})
     SayHelloResponse sayHello(@ApiParam String name);
 
     @POST
     @Path("sayHello2")
-    @ApiOperation(value = "Find pet by ID")
+    @ApiOperation(value = "测试sayHello2接口")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"), @ApiResponse(code = 404, message = "Pet not found")})
     SayHelloResponse sayHello(@ApiParam SayHelloRequest sayHelloRequest);
 
