@@ -7,6 +7,8 @@ import com.atomscat.service.entity.request.SayHelloRequest;
 import com.atomscat.service.entity.request.base.CommonRequest;
 import com.atomscat.service.entity.response.SayHelloResponse;
 import com.atomscat.service.entity.response.base.CommonResponse;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Api(description = "demo接口")
 public class DemoServiceImpl implements DemoService {
     private static Logger logger = LoggerFactory.getLogger(DemoServiceImpl.class);
 
@@ -29,6 +32,7 @@ public class DemoServiceImpl implements DemoService {
     }
 
     @Override
+    @ApiOperation(value = "sayHello2")
     public SayHelloResponse sayHello(SayHelloRequest sayHelloRequest) {
         SayHelloResponse sayHelloResponse = new SayHelloResponse();
         sayHelloResponse.setMsg(String.format("[%s] : Hello, %s", serviceName, sayHelloRequest.getName()));
