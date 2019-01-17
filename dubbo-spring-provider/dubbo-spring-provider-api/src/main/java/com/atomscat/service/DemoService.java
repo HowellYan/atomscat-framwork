@@ -5,21 +5,46 @@ import com.atomscat.service.entity.request.SayHelloRequest;
 import com.atomscat.service.entity.request.base.CommonRequest;
 import com.atomscat.service.entity.response.SayHelloResponse;
 import com.atomscat.service.entity.response.base.CommonResponse;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import java.util.List;
 import java.util.Map;
 
-@Api(description = "demo接口")
+@Path("/")
+@Api(value = "/", description = "Operations about pets")
+@Produces({"application/json"})
 public interface DemoService {
-    SayHelloResponse sayHello(String name);
+    @POST
+    @Path("sayHello1")
+    @ApiOperation(value = "Find pet by ID")
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"), @ApiResponse(code = 404, message = "Pet not found")})
+    SayHelloResponse sayHello(@ApiParam String name);
 
-    @ApiOperation(value = "sayHello2")
-    SayHelloResponse sayHello(SayHelloRequest sayHelloRequest);
+    @POST
+    @Path("sayHello2")
+    @ApiOperation(value = "Find pet by ID")
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"), @ApiResponse(code = 404, message = "Pet not found")})
+    SayHelloResponse sayHello(@ApiParam SayHelloRequest sayHelloRequest);
 
-    CommonResponse<SayHelloResponse> sayHello(CommonRequest<SayHelloRequest> sayHelloRequestCommonRequest);
-    CommonResponse<SayHelloResponse> sayHello(CommonRequest<SayHelloRequest> sayHelloRequestCommonRequest, CommonRequest<List<BookBean>> listCommonRequest);
-    CommonResponse<SayHelloResponse> getBook(CommonRequest<Map<String, BookBean>> sayHelloRequestCommonRequest);
+    @POST
+    @Path("sayHello3")
+    @ApiOperation(value = "Find pet by ID")
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"), @ApiResponse(code = 404, message = "Pet not found")})
+    CommonResponse<SayHelloResponse> sayHello(@ApiParam CommonRequest<SayHelloRequest> sayHelloRequestCommonRequest);
+
+    @POST
+    @Path("sayHello4")
+    @ApiOperation(value = "Find pet by ID")
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"), @ApiResponse(code = 404, message = "Pet not found")})
+    CommonResponse<SayHelloResponse> sayHello(@ApiParam CommonRequest<SayHelloRequest> sayHelloRequestCommonRequest, CommonRequest<List<BookBean>> listCommonRequest);
+
+    @POST
+    @Path("getBook")
+    @ApiOperation(value = "Find pet by ID")
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"), @ApiResponse(code = 404, message = "Pet not found")})
+    CommonResponse<SayHelloResponse> getBook(@ApiParam CommonRequest<Map<String, BookBean>> sayHelloRequestCommonRequest);
 
 }
