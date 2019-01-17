@@ -25,6 +25,7 @@ public class DemoServiceImpl implements DemoService {
     @Value("${dubbo.application.name}")
     private String serviceName;
 
+    @Override
     public SayHelloResponse sayHello(String name) {
         SayHelloResponse sayHelloResponse = new SayHelloResponse();
         sayHelloResponse.setMsg(String.format("[%s] : Hello, %s", serviceName, name));
@@ -32,7 +33,6 @@ public class DemoServiceImpl implements DemoService {
     }
 
     @Override
-    @ApiOperation(value = "sayHello2")
     public SayHelloResponse sayHello(SayHelloRequest sayHelloRequest) {
         SayHelloResponse sayHelloResponse = new SayHelloResponse();
         sayHelloResponse.setMsg(String.format("[%s] : Hello, %s", serviceName, sayHelloRequest.getName()));
