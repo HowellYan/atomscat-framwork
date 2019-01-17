@@ -19,11 +19,11 @@ public class DubboHelpMapService {
     public JSONObject merge(JSONObject paths, JSONObject definitions) {
         if(paths.containsKey("parameters")&& paths.get("parameters") instanceof JSONArray){
             JSONArray parameters = (JSONArray)paths.get("parameters");
-            for (int i=0; i< parameters.size();i++){
-                JSONObject item = (JSONObject) parameters.get(i);
-                String key = ((JSONObject)item.get("schema")).get("$ref").toString().replace("#/definitions/", "");
-                parameters.add(i, definitions.get(key));
-            }
+//            for (int i=0; i< parameters.size();i++){
+//                JSONObject item = (JSONObject) parameters.get(i);
+//                String key = ((JSONObject)item.get("schema")).get("$ref").toString().replace("#/definitions/", "");
+//                parameters.add(i, definitions.get(key));
+//            }
             parameters.forEach((item)->{
                 merge((JSONObject) item, definitions);
             });
