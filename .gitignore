@@ -26,3 +26,4 @@ git.pub
 rebel.xml
 build/
 .gradle
+**/swagger.json
