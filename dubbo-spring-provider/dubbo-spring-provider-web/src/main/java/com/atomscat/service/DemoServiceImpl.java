@@ -74,6 +74,11 @@ public class DemoServiceImpl implements DemoService {
     }
 
     @Override
+    public CommonResponse<SayHelloResponse> sayHello(List<BookBean> listCommonRequest) {
+        return null;
+    }
+
+    @Override
     public CommonResponse<SayHelloResponse> getBook(CommonRequest<Map<String, BookBean>> sayHelloRequestCommonRequest) {
         logger.info(JSON.toJSONString(sayHelloRequestCommonRequest.getRequest()));
         sayHelloRequestCommonRequest.getRequest().forEach((key, values)->{

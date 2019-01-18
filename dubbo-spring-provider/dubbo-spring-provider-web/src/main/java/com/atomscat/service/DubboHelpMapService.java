@@ -12,17 +12,17 @@ public class DubboHelpMapService {
         key = "/" + key;
         JSONObject paths = (JSONObject)((JSONObject)jsonObject.get("paths")).get(key);
         JSONObject definitions = (JSONObject)jsonObject.get("definitions");
+
         paths = merge(paths, definitions);
         return paths;
     }
 
-    public JSONObject merge(JSONObject paths, JSONObject definitions) {
+    private JSONObject merge(JSONObject paths, JSONObject definitions) {
         if(paths.containsKey("parameters")&& paths.get("parameters") instanceof JSONArray){
             JSONArray parameters = (JSONArray)paths.get("parameters");
-//            for (int i=0; i< parameters.size();i++){
-//                JSONObject item = (JSONObject) parameters.get(i);
-//                String key = ((JSONObject)item.get("schema")).get("$ref").toString().replace("#/definitions/", "");
-//                parameters.add(i, definitions.get(key));
+//            for (int i = 0; i < parameters.size(); i++) {
+//                parameters.add(i, getBody((JSONObject) parameters.get(i), definitions));
+//                merge((JSONObject) parameters.get(i), definitions);
 //            }
             parameters.forEach((item)->{
                 merge((JSONObject) item, definitions);
@@ -33,12 +33,22 @@ public class DubboHelpMapService {
                     merge((JSONObject) v, definitions);
                 } else if (k.equals("$ref")) {
                     String key = v.toString().replace("#/definitions/", "");
-                    paths.put("class", definitions.get(key));
-                    //merge(paths, definitions);
+                    paths.put(k, definitions.get(key));
                 }
             });
         }
         return paths;
     }
+
+    private JSONObject getBody(JSONObject paths, JSONObject definitions){
+        if (paths.containsKey("schema") &&  !((JSONObject)paths.get("schema")).containsKey("type") && ((JSONObject)paths.get("schema")).containsKey("$ref")) {
+            String key = ((JSONObject)paths.get("schema")).get("$ref").toString().replace("#/definitions/", "");
+            return (JSONObject)definitions.get(key);
+        } else {
+
+        }
+        return paths;
+    }
+
 
 }

@@ -39,7 +39,14 @@ public interface DemoService {
     @Path("sayHello4")
     @ApiOperation(value = "Find pet by ID")
     @ApiResponses(value = {})
-    CommonResponse<SayHelloResponse> sayHello(@ApiParam CommonRequest<SayHelloRequest> sayHelloRequestCommonRequest, CommonRequest<List<BookBean>> listCommonRequest);
+    CommonResponse<SayHelloResponse> sayHello(@ApiParam CommonRequest<SayHelloRequest> sayHelloRequestCommonRequest, @ApiParam CommonRequest<List<BookBean>> listCommonRequest);
+
+    @POST
+    @Path("sayHello5")
+    @ApiOperation(value = "Find pet by ID")
+    @ApiResponses(value = {})
+    CommonResponse<SayHelloResponse> sayHello(@ApiParam List<BookBean> listCommonRequest);
+
 
     @POST
     @Path("getBook")
